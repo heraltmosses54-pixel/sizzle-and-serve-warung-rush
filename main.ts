@@ -3,12 +3,25 @@
 // (game/index.html and its ES modules, no library and no network request), and the program
 // hands it in. It copies game/ and screenshots/ from beside this file to /output and writes
 // /output/dossier.json, the summary the judge reads, with the vendored make.fun library.
-// The game is Sizzle & Serve — Warung Rush, a complete 2D canvas cooking game: take orders
-// from the board, cook raw ingredients on the stove, assemble dishes on the plate and serve
-// them before customers lose patience, with a shift timer, hearts, combos, levels, a title
-// screen, pause, game over and restart, flat vector art and WebAudio sound effects. Build
-// your own cooking game in its place, put your 3 or 4 PNG or JPEG screenshots in
-// screenshots/ (the first by name is the cover) and run it.
+//
+// The game is Sizzle & Serve — Warung Rush, a complete 2D canvas cooking game: run an
+// Indonesian street-food stall through a 2-minute shift. 4 screens (title, play, pause,
+// results); 5 dishes (Nasi Goreng, Mie Goreng, Sate Ayam, Ayam Geprek, Nasi Sayur) built
+// from 8 ingredients on the counter; 3 stove burners where raw food cooks in 3.5s and burns
+// if left 8s after READY (trashed, ingredient lost); an order board of up to 3 tickets
+// with draining patience bars, flashing urgency, customer mood faces and random VIP rush
+// orders worth double coins; a 3-slot plate and a serve bell paying coins + patience tips
+// + combo bonuses; 3 hearts (wrong dish or walk-out costs one); levels every 5 dishes
+// (faster spawns, shorter patience); juice throughout — particle bursts, floating "+Rp"
+// text, squash-and-stretch on the serve button and plate, screen shake on mistakes,
+// coin-pop in the HUD, pitch-varied WebAudio SFX and a quiet pentatonic music loop (M to
+// mute); flat vector art drawn in code and all sound synthesised, so the game needs no
+// assets, no fonts beyond system-ui, and makes no network request. Screenshots are real
+// renders of the game's own code, staged deterministically with ?shot=<name>&seed=1:
+// 1-serve (busy mid-shift cover), 2-play (full burners + steam), 3-rush (urgency moment),
+// 4-end (results with stars and coins). Build your own cooking game in its place, put
+// your 3 or 4 PNG or JPEG screenshots in screenshots/ (the first by name is the cover)
+// and run it.
 //
 // Serve it locally with `node serve.ts`, then open http://localhost:8080.
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:

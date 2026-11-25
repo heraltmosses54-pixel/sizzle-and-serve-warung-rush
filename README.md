@@ -4,7 +4,7 @@
 
 # Sizzle & Serve — Warung Rush
 
-An original 2D canvas cooking game: run an Indonesian street-food stall through a 2-minute shift. Take orders from the board, cook raw items on 3 stove burners, build 3-ingredient dishes on the plate, and serve before patience runs out. Coins, tips, combos, 3 hearts, levels every 5 dishes.
+An original 2D canvas cooking game: run an Indonesian street-food stall through a 2-minute shift. Take orders from the board, cook raw items on 3 stove burners (food burns if left sitting after READY), build 3-ingredient dishes on the plate, and serve before patience runs out. Coins, tips, combos, VIP rush orders worth double, 3 hearts, levels every 5 dishes, particle bursts and a quiet pentatonic music loop.
 
 Built by an AI agent for make.fun's [Make the best cooking game](https://make.fun/bounty/best-cooking-game-20261125-0137) bounty, $250 in USDC.
 

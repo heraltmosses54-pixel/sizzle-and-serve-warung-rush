@@ -15,8 +15,12 @@ patience.
 - **Add ingredients:** click an ingredient bin on the counter, or press keys
   1–8. Rice, noodles, chili, veg and sauce go straight onto the plate.
 - **Cook:** egg, chicken and skewer are raw — clicking their bin puts them on
-  a free stove burner for 3 seconds (progress ring). Click a finished burner
-  (glowing READY!) to move the cooked item onto the plate.
+  a free stove burner for 3.5 seconds (progress ring). Click a finished burner
+  (glowing READY!) to move the cooked item onto the plate. **Burn:** a finished
+  item left on its burner burns after 8 seconds — click the burnt burner to trash
+  it; the ingredient is lost, so don't leave food sitting.
+- **VIP rush orders:** about 1 in 7 tickets is a gold VIP — worth double coins,
+  but its patience drains faster, so it rewards fast, focused play.
 - **Serve:** when the plate holds exactly the three ingredients of an order,
   the SERVE button turns gold and the game tells you which dish matches.
   Click SERVE (or press S / Space). A correct serve pays the dish price plus a
@@ -26,7 +30,7 @@ patience.
   hearts; losing all three ends the shift early. The shift also ends when the
   2:00 timer runs out.
 - **Levels:** every 5 dishes served raises the level — orders arrive faster
-  and patience shrinks.
+  and patience shrinks (down to 8 seconds at high levels), so the rush builds.
 - **Results:** the shift-over screen shows dishes served, coins earned, best
   combo, mistakes and a 1–3 star rating. Press Enter (or PLAY AGAIN) for
   another shift.
@@ -40,20 +44,28 @@ patience.
 
 ## Sound
 
-All effects are synthesised with WebAudio (click, add, pan sizzle, serve
-chime, coin, wrong-dish buzz, level-up) — no audio files, no network.
+All effects are synthesised with WebAudio (click, add, pan sizzle, cook-done
+chime, serve chime, coin, wrong-dish buzz, order-expired sigh, burn sizzle,
+level-up) — no audio files, no network. Repeated actions get a small pitch
+wobble so they never sound identical. A quiet pentatonic music loop
+(gamelan-ish, with a low gong each bar) plays under the shift; M or the mute
+button silences everything. Juice: particle bursts and floating "+Rp" text on
+every serve, squash-and-stretch on the serve button and plate, a screen shake
+on mistakes, and a coin-pop in the HUD.
 
 ## What it shows (screenshots)
 
-- `1-serve.jpg` — a finished Nasi Goreng on the plate, the SERVE button lit,
-  "Matches: Nasi Goreng — ring the bell!", timer at 1:27, three orders on the
-  board, all eight ingredients on the counter.
-- `2-play.jpg` — mid-shift: three orders with patience bars, a dish
-  mid-assembly (rice + egg on the plate), timer at 1:51, stove and counter.
-- `3-start.jpg` — the title screen over the kitchen, with the recipe strip
-  and the START SHIFT button.
+- `1-serve.jpg` — the busy-service cover: two dishes already served (coins on
+  the board, COMBO x2), a finished Sate Ayam on the plate with the SERVE
+  button lit gold ("Matches: Sate Ayam — ring the bell!"), a fresh egg
+  mid-cook on a burner with its progress ring, timer at 1:27.
+- `2-play.jpg` — the stove at full tilt: all three burners cooking with steam,
+  a dish mid-assembly (rice + noodles on the plate), two orders on the board.
+- `3-rush.jpg` — the urgency moment: a ticket about to walk out (patience bar
+  red and flashing, worried customer face), timer at 0:24, one heart already
+  lost, an egg still cooking.
 - `4-end.jpg` — the shift-complete results screen (11 dishes, 148 coins,
-  2 stars, best combo x4) with PLAY AGAIN.
+  2 stars, best combo x4, 2 mistakes, 1 heart left) with PLAY AGAIN.
 
 ## How it meets the competition
 
