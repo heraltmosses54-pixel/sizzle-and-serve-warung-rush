@@ -42,55 +42,111 @@ export function drawIngredientIcon(ctx, id, cx, cy, s, cooked = false) {
   const u = s / 64;
   ctx.save();
   ctx.translate(cx, cy);
-  ctx.lineWidth = 2.5 * u;
-  ctx.strokeStyle = 'rgba(60,35,15,0.55)';
+  ctx.lineWidth = 3 * u;
+  ctx.strokeStyle = 'rgba(60,35,15,0.75)';
   if (id === 'rice') {
-    ctx.fillStyle = '#b8452f'; ctx.beginPath(); ctx.arc(0, 8 * u, 22 * u, 0, Math.PI); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#fbf7ea'; ctx.beginPath(); ctx.ellipse(0, 2 * u, 19 * u, 10 * u, 0, Math.PI, 0); ctx.fill();
-    ctx.fillStyle = '#fff'; for (const [dx, dy] of [[-8, -2], [0, -6], [8, -2]]) { ctx.beginPath(); ctx.arc(dx * u, dy * u, 3 * u, 0, 7); ctx.fill(); }
+    // A deep terracotta bowl with a dark rim, heaped with visible grains.
+    ctx.fillStyle = '#c05a35'; ctx.beginPath(); ctx.arc(0, 10 * u, 22 * u, 0, Math.PI); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = '#7e2a16'; ctx.lineWidth = 4 * u; ctx.beginPath(); ctx.arc(0, 10 * u, 22 * u, 0, Math.PI); ctx.stroke();
+    ctx.fillStyle = '#fff8ea'; ctx.beginPath(); ctx.ellipse(0, 4 * u, 19 * u, 11 * u, 0, Math.PI, 0); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#fff'; for (const [dx, dy] of [[-11, -1], [-4, -6], [3, -4], [10, -1], [-7, 3], [6, 2]]) { ctx.beginPath(); ctx.arc(dx * u, dy * u, 2.8 * u, 0, 7); ctx.fill(); }
+    ctx.fillStyle = '#e8dcc0'; for (const [dx, dy] of [[-8, 5], [0, 6], [8, 5]]) { ctx.beginPath(); ctx.arc(dx * u, dy * u, 2.2 * u, 0, 7); ctx.fill(); }
   } else if (id === 'noodle') {
+    // Blue bowl, wavy strands with a swirl, shine and garnish.
     ctx.fillStyle = '#3f6fb5'; ctx.beginPath(); ctx.arc(0, 10 * u, 21 * u, 0, Math.PI); ctx.fill(); ctx.stroke();
-    ctx.strokeStyle = '#f2c14e'; ctx.lineWidth = 4 * u; ctx.lineCap = 'round';
-    for (const dy of [-6, 0, 6]) { ctx.beginPath(); ctx.moveTo(-16 * u, dy * u); ctx.bezierCurveTo(-8 * u, (dy - 7) * u, 8 * u, (dy + 7) * u, 16 * u, dy * u); ctx.stroke(); }
-    ctx.strokeStyle = '#58a34a'; ctx.lineWidth = 3 * u; ctx.beginPath(); ctx.moveTo(-4 * u, -10 * u); ctx.lineTo(4 * u, -14 * u); ctx.stroke();
+    ctx.strokeStyle = '#2a4a7a'; ctx.lineWidth = 3.5 * u; ctx.beginPath(); ctx.arc(0, 10 * u, 21 * u, 0, Math.PI); ctx.stroke();
+    ctx.fillStyle = '#f7c948'; ctx.beginPath(); ctx.ellipse(0, 4 * u, 18 * u, 9 * u, 0, Math.PI, 0); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = '#e8a91c'; ctx.lineWidth = 3.5 * u; ctx.lineCap = 'round';
+    for (const [dy, ph] of [[-4, 0], [0, 1.2], [4, 2.4]]) {
+      ctx.beginPath(); ctx.moveTo(-15 * u, dy * u);
+      ctx.bezierCurveTo(-8 * u, (dy - 6) * u, -2 * u, (dy + 6) * u, 5 * u, (dy - 2) * u);
+      ctx.bezierCurveTo(9 * u, (dy - 6) * u, 12 * u, (dy + 3) * u, 15 * u, dy * u); ctx.stroke();
+    }
+    // A curling swirl on top.
+    ctx.strokeStyle = '#d98f0f'; ctx.lineWidth = 3 * u;
+    ctx.beginPath(); ctx.arc(6 * u, -6 * u, 5 * u, 0.5, 5.2); ctx.stroke();
+    // Shine, spring onion and a chili flake.
+    ctx.strokeStyle = 'rgba(255,255,255,0.75)'; ctx.lineWidth = 2.5 * u;
+    ctx.beginPath(); ctx.moveTo(-12 * u, -8 * u); ctx.quadraticCurveTo(-4 * u, -12 * u, 2 * u, -8 * u); ctx.stroke();
+    ctx.strokeStyle = '#2f6b28'; ctx.lineWidth = 3 * u;
+    ctx.beginPath(); ctx.moveTo(-8 * u, -10 * u); ctx.lineTo(-2 * u, -13 * u); ctx.moveTo(0, -11 * u); ctx.lineTo(6 * u, -14 * u); ctx.stroke();
+    ctx.fillStyle = '#d9382b'; ctx.beginPath(); ctx.arc(11 * u, -7 * u, 2.5 * u, 0, 7); ctx.fill();
   } else if (id === 'egg') {
+    // Fried egg: crisp white with a golden yolk, browned edges when cooked.
     ctx.fillStyle = cooked ? '#ffe9a8' : '#fdfdf4';
     ctx.beginPath(); ctx.ellipse(0, 0, 22 * u, 16 * u, 0.3, 0, 7); ctx.fill(); ctx.stroke();
+    if (cooked) { ctx.fillStyle = '#c97b3d'; for (const [dx, dy] of [[-18, -6], [16, 8], [-8, 12], [12, -11]]) { ctx.beginPath(); ctx.arc(dx * u, dy * u, 2.5 * u, 0, 7); ctx.fill(); } }
     ctx.fillStyle = cooked ? '#e8960f' : '#f6b73c';
-    ctx.beginPath(); ctx.arc(2 * u, 0, 9 * u, 0, 7); ctx.fill();
-    ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.beginPath(); ctx.arc(-1 * u, -3 * u, 3 * u, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.arc(2 * u, 0, 9 * u, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.beginPath(); ctx.arc(-1 * u, -3 * u, 3 * u, 0, 7); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 2 * u;
+    ctx.beginPath(); ctx.arc(2 * u, 0, 12 * u, Math.PI * 1.1, Math.PI * 1.6); ctx.stroke();
   } else if (id === 'chicken') {
+    // A drumstick: plump meaty end with shading, a bone with two knobs, char when cooked.
     ctx.fillStyle = cooked ? '#c97b3d' : '#e8a06a';
-    ctx.beginPath(); ctx.ellipse(-4 * u, 2 * u, 15 * u, 12 * u, -0.4, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(-5 * u, 3 * u, 16 * u, 13 * u, -0.4, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = cooked ? '#a85f2e' : '#d97b4f';
+    ctx.beginPath(); ctx.ellipse(-9 * u, 7 * u, 9 * u, 6 * u, -0.4, 0, 7); ctx.fill();
+    ctx.fillStyle = 'rgba(255,235,200,0.7)';
+    ctx.beginPath(); ctx.ellipse(-8 * u, -3 * u, 7 * u, 4 * u, -0.4, 0, 7); ctx.fill();
     ctx.strokeStyle = '#f5ead6'; ctx.lineWidth = 5 * u; ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.moveTo(8 * u, -6 * u); ctx.lineTo(18 * u, -14 * u); ctx.stroke();
-    ctx.fillStyle = '#f5ead6'; for (const [dx, dy] of [[16, -18], [21, -13]]) { ctx.beginPath(); ctx.arc(dx * u, dy * u, 3.5 * u, 0, 7); ctx.fill(); }
-    if (cooked) { ctx.fillStyle = '#8f4423'; ctx.beginPath(); ctx.arc(-8 * u, -2 * u, 2.5 * u, 0, 7); ctx.arc(0, 4 * u, 2.5 * u, 0, 7); ctx.fill(); }
+    ctx.beginPath(); ctx.moveTo(6 * u, -4 * u); ctx.lineTo(18 * u, -14 * u); ctx.stroke();
+    ctx.fillStyle = '#f5ead6';
+    for (const [dx, dy] of [[16, -18], [21, -13]]) { ctx.beginPath(); ctx.arc(dx * u, dy * u, 3.5 * u, 0, 7); ctx.fill(); }
+    ctx.strokeStyle = 'rgba(60,35,15,0.75)'; ctx.lineWidth = 2 * u;
+    ctx.beginPath(); ctx.arc(16 * u, -18 * u, 3.5 * u, 0, 7); ctx.arc(21 * u, -13 * u, 3.5 * u, 0, 7); ctx.stroke();
+    if (cooked) { ctx.fillStyle = '#7e3416'; for (const [dx, dy] of [[-12, 0], [-2, 8], [2, -6]]) { ctx.beginPath(); ctx.arc(dx * u, dy * u, 2.2 * u, 0, 7); ctx.fill(); } }
   } else if (id === 'skewer') {
+    // A satay skewer: long stick with a pointed tip, three glazed meat cubes.
     ctx.strokeStyle = '#c9a06a'; ctx.lineWidth = 3.5 * u; ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.moveTo(-22 * u, 14 * u); ctx.lineTo(22 * u, -14 * u); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-24 * u, 16 * u); ctx.lineTo(24 * u, -16 * u); ctx.stroke();
+    ctx.fillStyle = '#8a5a2b'; ctx.beginPath(); ctx.moveTo(24 * u, -16 * u); ctx.lineTo(28 * u, -19 * u); ctx.lineTo(24 * u, -12 * u); ctx.closePath(); ctx.fill();
     for (let i = 0; i < 3; i += 1) {
       const t = -14 + i * 12;
       ctx.save(); ctx.translate(t * u, -t * u * 0.64); ctx.rotate(-0.56);
-      ctx.fillStyle = cooked ? '#a85f2e' : '#d97b4f'; rr(ctx, -7 * u, -7 * u, 14 * u, 14 * u, 3 * u); ctx.fill(); ctx.stroke(); ctx.restore();
+      ctx.fillStyle = cooked ? '#a85f2e' : '#d97b4f'; rr(ctx, -7 * u, -7 * u, 14 * u, 14 * u, 3 * u); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,220,170,0.8)'; rr(ctx, -6 * u, -6 * u, 12 * u, 4 * u, 2 * u); ctx.fill();
+      if (cooked) { ctx.fillStyle = '#6b3410'; ctx.beginPath(); ctx.arc(3 * u, 3 * u, 2 * u, 0, 7); ctx.arc(-3 * u, 4 * u, 1.6 * u, 0, 7); ctx.fill(); }
+      ctx.restore();
     }
   } else if (id === 'chili') {
     ctx.fillStyle = '#d9382b'; ctx.beginPath(); ctx.moveTo(-18 * u, -12 * u);
     ctx.quadraticCurveTo(6 * u, -22 * u, 20 * u, 2 * u); ctx.quadraticCurveTo(10 * u, 20 * u, -6 * u, 12 * u);
     ctx.quadraticCurveTo(-16 * u, 6 * u, -18 * u, -12 * u); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,0.7)'; ctx.lineWidth = 2.5 * u; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(-10 * u, -10 * u); ctx.quadraticCurveTo(0, -16 * u, 12 * u, -4 * u); ctx.stroke();
+    ctx.fillStyle = '#8f1d14'; ctx.beginPath(); ctx.arc(8 * u, 8 * u, 2 * u, 0, 7); ctx.fill();
     ctx.strokeStyle = '#2f6b28'; ctx.lineWidth = 4 * u; ctx.lineCap = 'round';
     ctx.beginPath(); ctx.moveTo(-16 * u, -12 * u); ctx.quadraticCurveTo(-22 * u, -20 * u, -14 * u, -22 * u); ctx.stroke();
   } else if (id === 'veg') {
-    ctx.fillStyle = '#58a34a';
-    for (const a of [-0.7, 0, 0.7]) {
-      ctx.save(); ctx.rotate(a); ctx.beginPath(); ctx.ellipse(0, -8 * u, 8 * u, 16 * u, 0, 0, 7); ctx.fill(); ctx.restore();
+    // Fresh leafy greens: separate leaves in varied greens with veins, a light stem,
+    // a cherry tomato and a carrot tip for accent.
+    const leaves = [
+      { a: -0.85, c: '#2f7a2e', l: 17 },
+      { a: -0.35, c: '#58a34a', l: 19 },
+      { a: 0.15, c: '#7ec850', l: 18 },
+      { a: 0.65, c: '#4c8a3f', l: 16 },
+    ];
+    for (const lf of leaves) {
+      ctx.save(); ctx.rotate(lf.a);
+      ctx.fillStyle = lf.c; ctx.beginPath(); ctx.ellipse(0, -9 * u, 7.5 * u, lf.l * u, 0, 0, 7); ctx.fill();
+      ctx.strokeStyle = '#2f6b28'; ctx.lineWidth = 2 * u; ctx.stroke();
+      ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 1.6 * u;
+      ctx.beginPath(); ctx.moveTo(0, 2 * u); ctx.lineTo(0, (-9 - lf.l + 6) * u); ctx.stroke();
+      ctx.restore();
     }
-    ctx.strokeStyle = '#2f6b28'; ctx.lineWidth = 2 * u;
-    ctx.beginPath(); ctx.moveTo(0, 12 * u); ctx.lineTo(0, 20 * u); ctx.stroke();
+    ctx.strokeStyle = '#c9e39a'; ctx.lineWidth = 3 * u; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(0, 6 * u); ctx.lineTo(0, 20 * u); ctx.stroke();
+    ctx.fillStyle = '#d9382b'; ctx.beginPath(); ctx.arc(-13 * u, 8 * u, 6 * u, 0, 7); ctx.fill();
+    ctx.strokeStyle = 'rgba(60,35,15,0.75)'; ctx.lineWidth = 2 * u; ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.beginPath(); ctx.arc(-15 * u, 6 * u, 1.8 * u, 0, 7); ctx.fill();
+    ctx.fillStyle = '#e8821e'; ctx.beginPath(); ctx.moveTo(12 * u, 10 * u); ctx.lineTo(20 * u, 8 * u); ctx.lineTo(14 * u, 16 * u); ctx.closePath(); ctx.fill(); ctx.stroke();
   } else if (id === 'sauce') {
     ctx.fillStyle = '#f2e3c9'; rr(ctx, -9 * u, -20 * u, 18 * u, 34 * u, 4 * u); ctx.fill(); ctx.stroke();
     ctx.fillStyle = '#8a5a2b'; rr(ctx, -9 * u, -4 * u, 18 * u, 18 * u, 3 * u); ctx.fill();
-    ctx.fillStyle = '#5a3a18'; rr(ctx, -5 * u, -26 * u, 10 * u, 8 * u, 2 * u); ctx.fill();
+    ctx.fillStyle = '#5a3a18'; rr(ctx, -5 * u, -26 * u, 10 * u, 8 * u, 2 * u); ctx.fill(); ctx.stroke();
+    // Gloss stripe down the clear upper half of the bottle.
+    ctx.fillStyle = 'rgba(255,255,255,0.65)'; rr(ctx, -7 * u, -18 * u, 2.5 * u, 12 * u, 1.2 * u); ctx.fill();
     // The house sauce: our own "KECAP" label, shrunk to fit the bottle at any size.
     ctx.fillStyle = '#fff';
     let fs = 10 * u;
@@ -108,11 +164,60 @@ function drawBackground(ctx, t) {
   ctx.strokeStyle = 'rgba(180,130,60,0.35)'; ctx.lineWidth = 2;
   for (let y = 120; y < 470; y += 44) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(1280, y); ctx.stroke(); }
   for (let x = 0; x < 1280; x += 88) { ctx.beginPath(); ctx.moveTo(x, 96); ctx.lineTo(x, 470); ctx.stroke(); }
-  // Window with a sunny street.
-  ctx.fillStyle = '#7ec8e3'; rr(ctx, 60, 130, 220, 150, 10); ctx.fill();
-  ctx.fillStyle = '#ffe9a8'; ctx.beginPath(); ctx.arc(230, 170, 22, 0, 7); ctx.fill();
+  // Window with a sunny street: layered skyline, glowing sun, clouds, green below.
+  ctx.save();
+  rr(ctx, 60, 130, 220, 150, 10); ctx.clip();
+  const sky = ctx.createLinearGradient(0, 130, 0, 280);
+  sky.addColorStop(0, '#6fc3e8'); sky.addColorStop(0.65, '#a5dcef'); sky.addColorStop(1, '#d8f0d8');
+  ctx.fillStyle = sky; ctx.fillRect(60, 130, 220, 150);
+  // Two small clouds.
+  ctx.fillStyle = 'rgba(255,255,255,0.92)';
+  for (const [cx, cy, s] of [[108, 152, 1], [196, 142, 0.8]]) {
+    ctx.beginPath();
+    ctx.arc(cx - 12 * s, cy, 8 * s, 0, 7); ctx.arc(cx, cy - 5 * s, 10 * s, 0, 7); ctx.arc(cx + 12 * s, cy, 8 * s, 0, 7);
+    ctx.fill();
+  }
+  // Sun with a soft glow and short rays.
+  ctx.fillStyle = 'rgba(255,233,168,0.35)'; ctx.beginPath(); ctx.arc(232, 168, 36, 0, 7); ctx.fill();
+  ctx.fillStyle = 'rgba(255,233,168,0.55)'; ctx.beginPath(); ctx.arc(232, 168, 28, 0, 7); ctx.fill();
+  ctx.strokeStyle = '#ffd23e'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+  for (let i = 0; i < 8; i += 1) {
+    const a = (i / 8) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(232 + Math.cos(a) * 25, 168 + Math.sin(a) * 25);
+    ctx.lineTo(232 + Math.cos(a) * 32, 168 + Math.sin(a) * 32);
+    ctx.stroke();
+  }
+  ctx.fillStyle = '#ffe066'; ctx.beginPath(); ctx.arc(232, 168, 19, 0, 7); ctx.fill();
+  ctx.strokeStyle = '#e8a91c'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(232, 168, 19, 0, 7); ctx.stroke();
+  // Far skyline, pale for depth.
+  ctx.fillStyle = '#a9c6d4';
+  ctx.fillRect(64, 196, 34, 54); ctx.fillRect(104, 206, 26, 44); ctx.fillRect(196, 200, 30, 50); ctx.fillRect(232, 210, 34, 40);
+  ctx.fillStyle = '#c3d9e2'; ctx.fillRect(136, 214, 24, 36); ctx.fillRect(164, 204, 22, 46);
+  // Near buildings, warm and varied, with small lit and plain windows.
+  const near = [
+    { x: 66, y: 216, w: 40, h: 34, c: '#8a5a2b' },
+    { x: 112, y: 228, w: 34, h: 22, c: '#a06a35' },
+    { x: 152, y: 210, w: 44, h: 40, c: '#6b4a2f' },
+    { x: 202, y: 224, w: 36, h: 26, c: '#8a5a2b' },
+    { x: 244, y: 214, w: 32, h: 36, c: '#a06a35' },
+  ];
+  for (const b of near) {
+    ctx.fillStyle = b.c; ctx.fillRect(b.x, b.y, b.w, b.h);
+    ctx.strokeStyle = 'rgba(60,35,15,0.6)'; ctx.lineWidth = 1.5; ctx.strokeRect(b.x, b.y, b.w, b.h);
+    for (let wy = b.y + 6; wy < b.y + b.h - 4; wy += 11) {
+      for (let wx = b.x + 6; wx < b.x + b.w - 4; wx += 11) {
+        ctx.fillStyle = ((wx + wy) % 22 === 0) ? '#ffe9a8' : '#3a2a18';
+        ctx.fillRect(wx, wy, 5, 6);
+      }
+    }
+  }
+  // Green strip with bushes below.
   ctx.fillStyle = '#58a34a'; ctx.fillRect(60, 250, 220, 30);
-  ctx.fillStyle = '#8a5a2b'; ctx.fillRect(90, 210, 40, 40); ctx.fillRect(170, 220, 55, 30);
+  ctx.fillStyle = '#3f7a34'; ctx.beginPath(); ctx.arc(96, 258, 10, 0, 7); ctx.arc(116, 262, 8, 0, 7); ctx.arc(248, 260, 9, 0, 7); ctx.fill();
+  ctx.fillStyle = '#ff8fb0'; ctx.beginPath(); ctx.arc(120, 256, 2.5, 0, 7); ctx.arc(252, 254, 2.5, 0, 7); ctx.fill();
+  ctx.restore();
+  // Frame and cross bars on top.
   ctx.strokeStyle = '#6b4a2f'; ctx.lineWidth = 6; rr(ctx, 60, 130, 220, 150, 10); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(170, 130); ctx.lineTo(170, 280); ctx.moveTo(60, 205); ctx.lineTo(280, 205); ctx.stroke();
   // Chalkboard menu on the right wall.
@@ -121,12 +226,15 @@ function drawBackground(ctx, t) {
   text(ctx, "TODAY'S MENU", 1100, 152, 16, '#ffe9a8', 'center');
   for (let i = 0; i < 4; i += 1) text(ctx, RECIPES[i].name, 1000, 182 + i * 24, 14, '#f5f0dc');
   for (let i = 0; i < 4; i += 1) text(ctx, `${RECIPES[i].coins}c`, 1200, 182 + i * 24, 14, '#ffd23e', 'right');
-  // Hanging pans.
+  // Hanging pans, in three different sizes.
+  const panSizes = [30, 20, 25];
   for (let i = 0; i < 3; i += 1) {
     const x = 340 + i * 70;
-    ctx.strokeStyle = '#5a4a3a'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x, 96); ctx.lineTo(x, 128); ctx.stroke();
-    ctx.fillStyle = '#3a3a3a'; ctx.beginPath(); ctx.arc(x, 150, 24, 0, 7); ctx.fill();
-    ctx.fillStyle = '#555'; ctx.beginPath(); ctx.arc(x, 150, 17, 0, 7); ctx.fill();
+    const r = panSizes[i];
+    ctx.strokeStyle = '#5a4a3a'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x, 96); ctx.lineTo(x, 150 - r); ctx.stroke();
+    ctx.fillStyle = '#3a3a3a'; ctx.beginPath(); ctx.arc(x, 150, r, 0, 7); ctx.fill();
+    ctx.fillStyle = '#555'; ctx.beginPath(); ctx.arc(x, 150, Math.round(r * 0.7), 0, 7); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.beginPath(); ctx.arc(x - r * 0.3, 150 - r * 0.3, Math.round(r * 0.18), 0, 7); ctx.fill();
   }
   // Steam wisp over the stove, drifting with time.
   ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 4; ctx.lineCap = 'round';
@@ -290,12 +398,20 @@ function drawPlateArea(ctx, world) {
   ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(0, 0, 150, 62, 0, 0, 7); ctx.fill();
   ctx.strokeStyle = '#d8c9a8'; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(0, 0, 150, 62, 0, 0, 7); ctx.stroke();
   ctx.strokeStyle = '#e8dcc0'; ctx.beginPath(); ctx.ellipse(0, 0, 118, 46, 0, 0, 7); ctx.stroke();
-  // Assembled ingredients on the plate.
-  world.plate.forEach((id, i) => {
-    const cx = -90 + i * 90;
-    drawIngredientIcon(ctx, id, cx, -4, 62, true);
+  // Assembled ingredients on the plate, drawn big so they read in a screenshot.
+  // The sauce bottle is served beside the plate, not on it (drawn below).
+  const plateFoods = world.plate.filter((id) => id !== 'sauce');
+  plateFoods.forEach((id, i) => {
+    const cx = (i - (plateFoods.length - 1) / 2) * 90;
+    drawIngredientIcon(ctx, id, cx, -4, 90, true);
   });
   ctx.restore();
+  // The bottle stands on the serving board beside the plate, clearly separate.
+  if (world.plate.includes('sauce')) {
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    ctx.beginPath(); ctx.ellipse(500, 424, 14, 4, 0, 0, 7); ctx.fill();
+    drawIngredientIcon(ctx, 'sauce', 500, 406, 72, true);
+  }
   text(ctx, world.plate.length === 0 ? 'Your plate — build a dish here' : `${world.plate.length} / 3 on the plate`, p.x + p.w / 2, p.y + 158, 14, '#3a2a18', 'center');
   // Serve bell and trash. The bell swells for a beat after every serve.
   const match = world.plate.length > 0 && world.findMatch();
