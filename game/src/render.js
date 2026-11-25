@@ -1,9 +1,11 @@
 // Every pixel of Sizzle & Serve is drawn here on a 1280x720 canvas: the warung
-// storefront (awning, string lights, night window, BUKA sign, cash register,
-// stools), the plank wall with its SATE AYAM poster, banner, hanging plant,
-// crack and stains, the five big customers standing grounded on the waiting
-// deck with thought bubbles and patience bars, the kitchen, the order board,
-// the counter bins, the stove, the plate, the HUD and the menus. All art is
+// storefront (awning, string lights, night window, BUKA sign, stools), the plank
+// wall with its SATE AYAM poster, banner, hanging plant, crack and stains, the
+// five BIG customers waiting behind the glass counter — head, shoulders and
+// torso above the counter front, lower bodies hidden behind it, just like a
+// person standing behind the counter in a real warung — with thought bubbles
+// and patience bars on the counter face, the kitchen, the order board, the
+// counter bins, the stove, the plate, the HUD and the menus. All art is
 // original vector drawing (no images, no fonts beyond the system sans), so the
 // game needs no assets.
 import { INGREDIENTS, ING_BY_ID, LAYOUT, RECIPES, VIEW } from './config.js';
@@ -320,25 +322,12 @@ function drawBackground(ctx, t) {
   // Floor.
   ctx.fillStyle = '#b07a45'; ctx.fillRect(0, 470, 1280, 250);
   ctx.fillStyle = '#9c6a38'; for (let x = 0; x < 1280; x += 128) ctx.fillRect(x, 470, 4, 250);
-  // Raised wooden waiting deck inside the warung: the queue's floor line.
-  // Customers stand on its top edge (y 384); the serving board and counter
-  // in front of it hide its lower face in the middle, as a real counter would.
-  ctx.fillStyle = '#9c6a38'; ctx.fillRect(220, 382, 540, 20);
-  ctx.fillStyle = '#c98d54'; ctx.fillRect(220, 382, 540, 4);
-  ctx.fillStyle = '#7a4a22'; for (let x = 260; x < 760; x += 60) ctx.fillRect(x, 386, 3, 16);
-  ctx.fillStyle = '#7a4a22'; ctx.fillRect(220, 400, 540, 2);
-  // Cash register on a little side table under the waiting deck, left side.
-  ctx.fillStyle = '#6b4423'; rr(ctx, 250, 428, 136, 32, 6); ctx.fill();
-  ctx.strokeStyle = '#4a2e15'; ctx.lineWidth = 2; rr(ctx, 250, 428, 136, 32, 6); ctx.stroke();
-  ctx.fillStyle = '#5a3a18'; ctx.fillRect(260, 460, 10, 10); ctx.fillRect(366, 460, 10, 10);
-  ctx.fillStyle = '#3a3a3a'; rr(ctx, 270, 392, 96, 36, 6); ctx.fill();
-  ctx.strokeStyle = '#222'; ctx.lineWidth = 2; rr(ctx, 270, 392, 96, 36, 6); ctx.stroke();
-  ctx.fillStyle = '#ffd23e'; rr(ctx, 280, 398, 42, 14, 3); ctx.fill();
-  text(ctx, 'Rp', 301, 406, 10, '#3a2a18', 'center');
-  ctx.fillStyle = '#f5f0dc';
-  for (let i = 0; i < 4; i += 1) ctx.fillRect(282 + i * 13, 417, 9, 6);
-  ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(276, 396); ctx.lineTo(276, 424); ctx.stroke();
+  // The counter front itself is drawn in drawQueue, AFTER the customers, so
+  // it hides their lower bodies: they stand behind the counter like a person
+  // behind the glass counter in a real warung — head and torso above it, the
+  // rest behind the wood. (The old waiting deck and cash register are gone:
+  // the deck's floor line made the queue look like it was standing on a stage,
+  // and the register had nowhere to sit once the counter front went in.)
 }
 
 // Two wooden stools where customers sit at the counter. Drawn after the counter
@@ -360,12 +349,12 @@ function drawStools(ctx) {
 
 function patienceColor(frac) { return frac > 0.5 ? '#58a34a' : frac > 0.25 ? '#f2a541' : '#d9382b'; }
 
-// The customer queue: five BIG illustrated customers standing INSIDE the warung
-// on a raised wooden waiting deck (feet on the deck's top edge, y 384, with a
-// soft shadow under each pair of shoes), so they read as real people waiting
-// for their order instead of floating busts. A customer's face and patience
-// bar mirror their ticket; a VIP order's customer gets a gold outline.
-const QUEUE_X = [275, 375, 475, 575, 675];
+// The customer queue: five BIG customers waiting behind the counter, like the
+// person standing behind the glass counter in the owner's family shop — head,
+// shoulders and torso rising above the counter front, lower body hidden behind
+// it, so no feet are ever on show. A customer's face and patience bar mirror
+// their ticket; a VIP order's customer gets a gold outline.
+const QUEUE_X = [275, 385, 495, 605, 715];
 const QUEUE_ROSTER = [
   { skin: '#c98d5f', top: '#2f7a2e', pants: '#2f3a4a', hat: 'ojek' }, // ojek driver, green jacket + helmet
   { skin: '#f2c89b', top: '#d9382b', pants: '#8a2f2f', hat: 'kerudung' }, // ibu with a red kerudung
@@ -373,102 +362,100 @@ const QUEUE_ROSTER = [
   { skin: '#f2c89b', top: '#f5f0dc', pants: '#2f2f38', hat: 'tie' }, // office worker, white shirt + tie
   { skin: '#c98d5f', top: '#f2a541', pants: '#5a4a3a', hat: 'batik' }, // pak in a batik shirt
 ];
-const QUEUE_FEET = 384; // every customer's shoes sit on this deck line
+const COUNTER_TOP = 402; // the counter front's top edge: everything below it is hidden
 
 function drawCustomer(ctx, cx, spec, frac, vip, recipe) {
-  const fy = QUEUE_FEET; // feet line
-  const hy = fy - 122; // head centre (head r 26)
-  // Soft shadow under the shoes, on the deck.
-  ctx.fillStyle = 'rgba(0,0,0,0.20)';
-  ctx.beginPath(); ctx.ellipse(cx, fy + 2, 46, 6, 0, 0, 7); ctx.fill();
-  // VIP: gold outline around the whole customer (bubble to shoes).
+  const hy = 252; // head centre (head r 36)
+  // VIP: gold outline around the visible customer (bubble to counter top).
   if (vip) {
     ctx.strokeStyle = '#f2a541'; ctx.lineWidth = 4;
-    rr(ctx, cx - 62, 168, 124, 222, 12); ctx.stroke();
-    ctx.fillStyle = '#b87a1d'; rr(ctx, cx - 24, 156, 48, 14, 4); ctx.fill();
-    text(ctx, 'VIP', cx, 163, 10, '#fff', 'center');
+    rr(ctx, cx - 82, 140, 164, 262, 12); ctx.stroke();
+    ctx.fillStyle = '#b87a1d'; rr(ctx, cx - 26, 132, 52, 16, 5); ctx.fill();
+    text(ctx, 'VIP', cx, 140, 10, '#fff', 'center');
   }
   // Thought bubble: the ordered dish, or an ellipsis while waiting.
-  ctx.fillStyle = '#fff'; rr(ctx, cx - 55, 168, 110, 42, 10); ctx.fill();
-  ctx.strokeStyle = vip ? '#f2a541' : '#c9a06a'; ctx.lineWidth = 2; rr(ctx, cx - 55, 168, 110, 42, 10); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx - 10, 210); ctx.lineTo(cx + 10, 210); ctx.lineTo(cx, 226); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#fff'; rr(ctx, cx - 65, 150, 130, 46, 10); ctx.fill();
+  ctx.strokeStyle = vip ? '#f2a541' : '#c9a06a'; ctx.lineWidth = 2; rr(ctx, cx - 65, 150, 130, 46, 10); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx - 12, 196); ctx.lineTo(cx + 12, 196); ctx.lineTo(cx, 212); ctx.closePath(); ctx.fill(); ctx.stroke();
   if (recipe) {
-    recipe.needs.forEach((id, j) => drawIngredientIcon(ctx, id, cx - 28 + j * 28, 189, 22, true));
+    recipe.needs.forEach((id, j) => drawIngredientIcon(ctx, id, cx - 34 + j * 34, 173, 26, true));
   } else {
-    text(ctx, '…', cx, 190, 22, '#8a6a42', 'center');
+    text(ctx, '…', cx, 176, 24, '#8a6a42', 'center');
   }
-  // Legs and shoes, planted on the deck line.
-  if (spec.hat === 'kerudung') {
-    // Long dress instead of separate legs.
-    ctx.fillStyle = spec.pants; rr(ctx, cx - 40, 338, 80, 40, 10); ctx.fill();
-    ctx.strokeStyle = 'rgba(60,35,15,0.5)'; ctx.lineWidth = 2; rr(ctx, cx - 40, 338, 80, 40, 10); ctx.stroke();
-  } else {
-    ctx.fillStyle = spec.pants;
-    rr(ctx, cx - 30, 338, 22, 40, 8); ctx.fill();
-    rr(ctx, cx + 8, 338, 22, 40, 8); ctx.fill();
-    ctx.strokeStyle = 'rgba(60,35,15,0.5)'; ctx.lineWidth = 2;
-    rr(ctx, cx - 30, 338, 22, 40, 8); ctx.stroke();
-    rr(ctx, cx + 8, 338, 22, 40, 8); ctx.stroke();
-  }
-  ctx.fillStyle = '#3a2a18';
-  ctx.beginPath(); ctx.ellipse(cx - 19, fy - 4, 15, 6, 0, 0, 7); ctx.ellipse(cx + 19, fy - 4, 15, 6, 0, 0, 7); ctx.fill();
-  // Arms, hanging at the sides.
-  ctx.strokeStyle = spec.top; ctx.lineWidth = 15; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(cx - 42, 300); ctx.lineTo(cx - 54, 344); ctx.moveTo(cx + 42, 300); ctx.lineTo(cx + 54, 344); ctx.stroke();
-  // Body: shoulders to the hem.
+  // Arms, hanging at the sides, ending at the counter top.
+  ctx.strokeStyle = spec.top; ctx.lineWidth = 18; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(cx - 60, 306); ctx.lineTo(cx - 74, 398); ctx.moveTo(cx + 60, 306); ctx.lineTo(cx + 74, 398); ctx.stroke();
+  // Body: shoulders to below the counter top (the counter front hides the rest).
   ctx.fillStyle = spec.top;
   ctx.beginPath();
-  ctx.moveTo(cx - 52, 344); ctx.lineTo(cx - 44, 296);
-  ctx.quadraticCurveTo(cx, 286, cx + 44, 296); ctx.lineTo(cx + 52, 344); ctx.closePath(); ctx.fill();
+  ctx.moveTo(cx - 68, 440); ctx.lineTo(cx - 58, 300);
+  ctx.quadraticCurveTo(cx, 286, cx + 58, 300); ctx.lineTo(cx + 68, 440); ctx.closePath(); ctx.fill();
   ctx.strokeStyle = 'rgba(60,35,15,0.5)'; ctx.lineWidth = 2; ctx.stroke();
   if (spec.hat === 'tie') {
     ctx.fillStyle = '#d9382b';
-    ctx.beginPath(); ctx.moveTo(cx - 8, 300); ctx.lineTo(cx + 8, 300); ctx.lineTo(cx, 330); ctx.closePath(); ctx.fill();
-    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(cx - 13, 292); ctx.lineTo(cx, 300); ctx.lineTo(cx + 13, 292); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx - 10, 308); ctx.lineTo(cx + 10, 308); ctx.lineTo(cx, 344); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(cx - 16, 298); ctx.lineTo(cx, 308); ctx.lineTo(cx + 16, 298); ctx.closePath(); ctx.fill();
   } else if (spec.hat === 'batik') {
     ctx.fillStyle = 'rgba(60,35,15,0.55)';
-    for (const [dx, dy] of [[-27, 310], [0, 302], [27, 310], [-14, 326], [14, 326], [0, 340]]) {
-      ctx.beginPath(); ctx.arc(cx + dx, dy, 3.5, 0, 7); ctx.fill();
+    for (const [dx, dy] of [[-34, 316], [0, 306], [34, 316], [-18, 336], [18, 336], [0, 352]]) {
+      ctx.beginPath(); ctx.arc(cx + dx, dy, 4.5, 0, 7); ctx.fill();
     }
   } else if (spec.hat === 'kerudung') {
     ctx.fillStyle = 'rgba(255,255,255,0.35)';
-    ctx.beginPath(); ctx.moveTo(cx - 34, 300); ctx.lineTo(cx + 34, 300); ctx.lineTo(cx + 24, 312); ctx.lineTo(cx - 24, 312); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx - 42, 306); ctx.lineTo(cx + 42, 306); ctx.lineTo(cx + 30, 320); ctx.lineTo(cx - 30, 320); ctx.closePath(); ctx.fill();
   }
   // Head.
   if (spec.hat === 'kerudung') {
     // Kerudung: a scarf framing the face, draping to the shoulders.
-    ctx.fillStyle = spec.top; ctx.beginPath(); ctx.arc(cx, hy, 34, 0, 7); ctx.fill();
-    ctx.fillStyle = spec.top; rr(ctx, cx - 34, hy + 6, 68, 34, 10); ctx.fill();
+    ctx.fillStyle = spec.top; ctx.beginPath(); ctx.arc(cx, hy, 44, 0, 7); ctx.fill();
+    ctx.fillStyle = spec.top; rr(ctx, cx - 44, hy + 6, 88, 40, 10); ctx.fill();
   }
-  ctx.fillStyle = spec.skin; ctx.beginPath(); ctx.arc(cx, hy, 26, 0, 7); ctx.fill();
-  ctx.strokeStyle = 'rgba(60,35,15,0.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cx, hy, 26, 0, 7); ctx.stroke();
+  ctx.fillStyle = spec.skin; ctx.beginPath(); ctx.arc(cx, hy, 36, 0, 7); ctx.fill();
+  ctx.strokeStyle = 'rgba(60,35,15,0.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cx, hy, 36, 0, 7); ctx.stroke();
   if (spec.hat === 'ojek') {
     // Green helmet with a visor line.
-    ctx.fillStyle = '#2f7a2e'; ctx.beginPath(); ctx.arc(cx, hy - 5, 27, Math.PI, 0); ctx.fill();
-    ctx.fillStyle = '#2f7a2e'; rr(ctx, cx - 27, hy - 8, 54, 8, 4); ctx.fill();
-    ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 2.5;
-    ctx.beginPath(); ctx.moveTo(cx - 20, hy - 14); ctx.quadraticCurveTo(cx, hy - 20, cx + 20, hy - 14); ctx.stroke();
+    ctx.fillStyle = '#2f7a2e'; ctx.beginPath(); ctx.arc(cx, hy - 7, 37, Math.PI, 0); ctx.fill();
+    ctx.fillStyle = '#2f7a2e'; rr(ctx, cx - 37, hy - 10, 74, 10, 5); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(cx - 28, hy - 19); ctx.quadraticCurveTo(cx, hy - 27, cx + 28, hy - 19); ctx.stroke();
   } else if (spec.hat === 'cap') {
-    ctx.fillStyle = '#3f6fb5'; ctx.beginPath(); ctx.arc(cx, hy - 2, 25, Math.PI, 0); ctx.fill();
-    ctx.fillStyle = '#2a4a7a'; rr(ctx, cx - 2, hy - 10, 34, 7, 3); ctx.fill();
+    ctx.fillStyle = '#3f6fb5'; ctx.beginPath(); ctx.arc(cx, hy - 3, 34, Math.PI, 0); ctx.fill();
+    ctx.fillStyle = '#2a4a7a'; rr(ctx, cx - 3, hy - 13, 46, 9, 4); ctx.fill();
   } else if (spec.hat === 'batik' || spec.hat === 'tie') {
-    ctx.fillStyle = '#3a2a18'; ctx.beginPath(); ctx.arc(cx, hy - 4, 25, Math.PI * 0.95, Math.PI * 2.05); ctx.fill();
+    ctx.fillStyle = '#3a2a18'; ctx.beginPath(); ctx.arc(cx, hy - 5, 34, Math.PI * 0.95, Math.PI * 2.05); ctx.fill();
   }
   // Face: eyes and a mouth that mirrors the patience bar.
   ctx.fillStyle = '#3a2a18';
-  ctx.beginPath(); ctx.arc(cx - 9, hy - 2, 2.6, 0, 7); ctx.arc(cx + 9, hy - 2, 2.6, 0, 7); ctx.fill();
-  ctx.strokeStyle = '#3a2a18'; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.arc(cx - 12, hy - 3, 3.5, 0, 7); ctx.arc(cx + 12, hy - 3, 3.5, 0, 7); ctx.fill();
+  ctx.strokeStyle = '#3a2a18'; ctx.lineWidth = 3; ctx.lineCap = 'round';
   ctx.beginPath();
-  if (frac > 0.5) { ctx.arc(cx, hy + 8, 8, 0.15 * Math.PI, 0.85 * Math.PI); }
-  else if (frac > 0.25) { ctx.moveTo(cx - 7, hy + 10); ctx.lineTo(cx + 7, hy + 10); }
-  else { ctx.arc(cx, hy + 14, 8, 1.15 * Math.PI, 1.85 * Math.PI); }
+  if (frac > 0.5) { ctx.arc(cx, hy + 12, 10, 0.15 * Math.PI, 0.85 * Math.PI); }
+  else if (frac > 0.25) { ctx.moveTo(cx - 9, hy + 14); ctx.lineTo(cx + 9, hy + 14); }
+  else { ctx.arc(cx, hy + 18, 10, 1.15 * Math.PI, 1.85 * Math.PI); }
   ctx.stroke();
-  if (frac <= 0.25) { ctx.fillStyle = '#7ec8e3'; ctx.beginPath(); ctx.arc(cx + 24, hy - 14, 4, 0, 7); ctx.fill(); }
-  // Patience bar under the shoes, on the deck face (order customers only).
-  if (recipe) {
-    ctx.fillStyle = '#e8dcc0'; rr(ctx, cx - 55, 390, 110, 6, 3); ctx.fill();
-    ctx.fillStyle = patienceColor(frac); rr(ctx, cx - 55, 390, 110 * frac, 6, 3); ctx.fill();
-  }
+  if (frac <= 0.25) { ctx.fillStyle = '#7ec8e3'; ctx.beginPath(); ctx.arc(cx + 32, hy - 18, 5, 0, 7); ctx.fill(); }
+}
+
+// The counter front: a wooden face with a lighter countertop strip, drawn
+// AFTER the customers so it hides everything below the counter top (y 402).
+// Its plank seams and brass trim make it read as the front of the warung
+// counter, not a flat bar.
+function drawCounterFront(ctx) {
+  ctx.fillStyle = '#8a5a2b'; ctx.fillRect(200, COUNTER_TOP, 590, 68);
+  ctx.save();
+  ctx.beginPath(); ctx.rect(200, COUNTER_TOP, 590, 68); ctx.clip();
+  ctx.strokeStyle = 'rgba(107,68,35,0.6)'; ctx.lineWidth = 2;
+  for (let x = 260; x < 790; x += 60) { ctx.beginPath(); ctx.moveTo(x, COUNTER_TOP); ctx.lineTo(x, 470); ctx.stroke(); }
+  ctx.strokeStyle = 'rgba(255,220,170,0.35)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(200, 446); ctx.lineTo(790, 446); ctx.stroke();
+  ctx.fillStyle = 'rgba(60,35,15,0.25)'; ctx.fillRect(200, 464, 590, 6);
+  ctx.restore();
+  ctx.strokeStyle = '#6b4423'; ctx.lineWidth = 2.5; ctx.strokeRect(200, COUNTER_TOP, 590, 68);
+  // Countertop: a lighter wood strip along the top edge.
+  ctx.fillStyle = '#c98d54'; ctx.fillRect(200, COUNTER_TOP, 590, 10);
+  ctx.fillStyle = 'rgba(255,220,170,0.55)'; ctx.fillRect(200, COUNTER_TOP, 590, 3);
+  ctx.strokeStyle = '#b87a1d'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(200, COUNTER_TOP + 10); ctx.lineTo(790, COUNTER_TOP + 10); ctx.stroke();
 }
 
 function drawQueue(ctx, world) {
@@ -483,6 +470,16 @@ function drawQueue(ctx, world) {
     } else {
       drawCustomer(ctx, cx, spec, 1, false, null); // waiting for a table
     }
+  }
+  // The counter front hides the customers' lower bodies, then the patience
+  // bars go on the counter face under each customer who has an order.
+  drawCounterFront(ctx);
+  for (let i = 0; i < n; i += 1) {
+    const cx = QUEUE_X[i];
+    const order = world.orders[i];
+    const frac = Math.max(0, order.patience / order.max);
+    ctx.fillStyle = '#e8dcc0'; rr(ctx, cx - 50, 428, 100, 7, 3); ctx.fill();
+    ctx.fillStyle = patienceColor(frac); rr(ctx, cx - 50, 428, 100 * frac, 7, 3); ctx.fill();
   }
 }
 
