@@ -89,9 +89,13 @@ export function drawIngredientIcon(ctx, id, cx, cy, s, cooked = false) {
     ctx.beginPath(); ctx.ellipse(-9 * u, 7 * u, 9 * u, 6 * u, -0.4, 0, 7); ctx.fill();
     ctx.fillStyle = 'rgba(255,235,200,0.7)';
     ctx.beginPath(); ctx.ellipse(-8 * u, -3 * u, 7 * u, 4 * u, -0.4, 0, 7); ctx.fill();
-    ctx.strokeStyle = '#f5ead6'; ctx.lineWidth = 5 * u; ctx.lineCap = 'round';
+    // Bone: warm tan (not near-white) with a dark backing stroke so it reads
+    // against the light plate and counter; two knobs kept at the end.
+    ctx.strokeStyle = 'rgba(60,35,15,0.75)'; ctx.lineWidth = 8.5 * u; ctx.lineCap = 'round';
     ctx.beginPath(); ctx.moveTo(6 * u, -4 * u); ctx.lineTo(18 * u, -14 * u); ctx.stroke();
-    ctx.fillStyle = '#f5ead6';
+    ctx.strokeStyle = '#e9d3a7'; ctx.lineWidth = 5 * u;
+    ctx.beginPath(); ctx.moveTo(6 * u, -4 * u); ctx.lineTo(18 * u, -14 * u); ctx.stroke();
+    ctx.fillStyle = '#e9d3a7';
     for (const [dx, dy] of [[16, -18], [21, -13]]) { ctx.beginPath(); ctx.arc(dx * u, dy * u, 3.5 * u, 0, 7); ctx.fill(); }
     ctx.strokeStyle = 'rgba(60,35,15,0.75)'; ctx.lineWidth = 2 * u;
     ctx.beginPath(); ctx.arc(16 * u, -18 * u, 3.5 * u, 0, 7); ctx.arc(21 * u, -13 * u, 3.5 * u, 0, 7); ctx.stroke();
@@ -142,9 +146,10 @@ export function drawIngredientIcon(ctx, id, cx, cy, s, cooked = false) {
     ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.beginPath(); ctx.arc(-15 * u, 6 * u, 1.8 * u, 0, 7); ctx.fill();
     ctx.fillStyle = '#e8821e'; ctx.beginPath(); ctx.moveTo(12 * u, 10 * u); ctx.lineTo(20 * u, 8 * u); ctx.lineTo(14 * u, 16 * u); ctx.closePath(); ctx.fill(); ctx.stroke();
   } else if (id === 'sauce') {
-    ctx.fillStyle = '#f2e3c9'; rr(ctx, -9 * u, -20 * u, 18 * u, 34 * u, 4 * u); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#8a5a2b'; rr(ctx, -9 * u, -4 * u, 18 * u, 18 * u, 3 * u); ctx.fill();
-    ctx.fillStyle = '#5a3a18'; rr(ctx, -5 * u, -26 * u, 10 * u, 8 * u, 2 * u); ctx.fill(); ctx.stroke();
+    // Dark kecap bottle: near-black sweet-soy sauce, dark amber glass, dark cap.
+    ctx.fillStyle = '#3a2310'; rr(ctx, -9 * u, -20 * u, 18 * u, 34 * u, 4 * u); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#1d0e04'; rr(ctx, -9 * u, -4 * u, 18 * u, 18 * u, 3 * u); ctx.fill();
+    ctx.fillStyle = '#241606'; rr(ctx, -5 * u, -26 * u, 10 * u, 8 * u, 2 * u); ctx.fill(); ctx.stroke();
     // Gloss stripe down the clear upper half of the bottle.
     ctx.fillStyle = 'rgba(255,255,255,0.65)'; rr(ctx, -7 * u, -18 * u, 2.5 * u, 12 * u, 1.2 * u); ctx.fill();
     // The house sauce: our own "KECAP" label, shrunk to fit the bottle at any size.
@@ -388,8 +393,26 @@ function drawBins(ctx, world, t) {
 
 function drawPlateArea(ctx, world) {
   const p = LAYOUT.plate;
-  // Wooden serving board under the plate.
+  // Wooden serving board under the plate: warm wood with wavy grain lines, a
+  // defined rim, a light top bevel and a soft shadow, so it reads as a real
+  // board and not a flat bar. (The plate and bottle are drawn over the middle
+  // afterwards, so the grain shows on the ends and the bottom edge.)
   ctx.fillStyle = '#8a5a2b'; rr(ctx, p.x - 24, p.y + 96, p.w + 48, 40, 12); ctx.fill();
+  ctx.save();
+  rr(ctx, p.x - 24, p.y + 96, p.w + 48, 40, 12); ctx.clip();
+  ctx.strokeStyle = 'rgba(107,68,35,0.55)'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+  for (const [y0, amp] of [[404, 3], [416, 4], [428, 3]]) {
+    ctx.beginPath(); ctx.moveTo(p.x - 20, y0);
+    ctx.bezierCurveTo(p.x + 100, y0 - amp, p.x + 220, y0 + amp, p.x + p.w + 44, y0);
+    ctx.stroke();
+  }
+  ctx.strokeStyle = 'rgba(255,220,170,0.5)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(p.x - 12, p.y + 99); ctx.lineTo(p.x + p.w + 36, p.y + 99); ctx.stroke();
+  ctx.strokeStyle = 'rgba(60,35,15,0.4)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(p.x - 12, p.y + 133); ctx.lineTo(p.x + p.w + 36, p.y + 133); ctx.stroke();
+  ctx.restore();
+  ctx.strokeStyle = '#6b4423'; ctx.lineWidth = 2.5; rr(ctx, p.x - 24, p.y + 96, p.w + 48, 40, 12); ctx.stroke();
+  ctx.fillStyle = 'rgba(60,35,15,0.15)'; rr(ctx, p.x - 20, p.y + 136, p.w + 40, 5, 2); ctx.fill();
   // The plate, squashed wide and flat for a beat after every serve.
   const sq = world.serveAnim;
   ctx.save();
@@ -424,9 +447,32 @@ function drawPlateArea(ctx, world) {
   text(ctx, 'SERVE', 0, -9, 22, '#3a2a18', 'center');
   text(ctx, 'S / Space', 0, 17, 12, '#5a3a18', 'center');
   ctx.restore();
-  ctx.fillStyle = '#e8e0d0'; rr(ctx, TRASH_BTN.x, TRASH_BTN.y, TRASH_BTN.w, TRASH_BTN.h, 10); ctx.fill();
-  ctx.strokeStyle = '#b09a7a'; rr(ctx, TRASH_BTN.x, TRASH_BTN.y, TRASH_BTN.w, TRASH_BTN.h, 10); ctx.stroke();
-  text(ctx, 'Trash plate  (T)', TRASH_BTN.x + TRASH_BTN.w / 2, TRASH_BTN.y + 28, 15, '#5a3a18', 'center');
+  // The trash bin lives under the TODAY'S MENU board now: a proper real bin
+  // (ajar lid, tapered ridged body, shadow). Clicking it trashes the plate —
+  // the hit region is TRASH_BTN, shared with input.js, so it follows the art.
+  const bx = TRASH_BTN.x + TRASH_BTN.w / 2, by = TRASH_BTN.y + 56;
+  ctx.fillStyle = 'rgba(0,0,0,0.18)';
+  ctx.beginPath(); ctx.ellipse(bx, by + 38, 30, 6, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = '#8b9499';
+  ctx.beginPath(); ctx.moveTo(bx - 28, by - 36); ctx.lineTo(bx + 28, by - 36);
+  ctx.lineTo(bx + 22, by + 32); ctx.lineTo(bx - 22, by + 32); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(60,35,15,0.75)'; ctx.lineWidth = 3; ctx.stroke();
+  ctx.fillStyle = '#6e787d';
+  ctx.beginPath(); ctx.moveTo(bx - 28, by - 36); ctx.lineTo(bx + 28, by - 36);
+  ctx.lineTo(bx + 27, by - 28); ctx.lineTo(bx - 27, by - 28); ctx.closePath(); ctx.fill();
+  ctx.save();
+  ctx.translate(bx - 30, by - 38); ctx.rotate(-0.14);
+  ctx.fillStyle = '#6e787d'; rr(ctx, -2, -5, 68, 10, 4); ctx.fill();
+  ctx.strokeStyle = 'rgba(60,35,15,0.75)'; ctx.lineWidth = 2.5; ctx.stroke();
+  ctx.fillStyle = '#6e787d'; rr(ctx, 28, -11, 12, 7, 3); ctx.fill(); ctx.stroke();
+  ctx.restore();
+  ctx.strokeStyle = 'rgba(90,99,103,0.85)'; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+  for (const [tx, bxx] of [[-18, -14], [-6, -5], [6, 5], [18, 14]]) {
+    ctx.beginPath(); ctx.moveTo(bx + tx, by - 24); ctx.lineTo(bx + bxx, by + 28); ctx.stroke();
+  }
+  ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(bx - 22, by - 28); ctx.lineTo(bx - 18, by + 26); ctx.stroke();
+  text(ctx, 'TRASH (T)', bx, by + 50, 13, '#5a3a18', 'center');
   if (match) text(ctx, `Matches: ${match.recipe.name} — ring the bell!`, p.x + p.w / 2, p.y - 16, 15, '#2f6b28', 'center');
 }
 

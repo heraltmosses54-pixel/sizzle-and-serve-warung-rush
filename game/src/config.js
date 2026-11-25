@@ -83,5 +83,5 @@ export const LAYOUT = {
   stove: { x: 920, y: 500, w: 336, h: 108 },
   plate: { x: 480, y: 300, w: 320, h: 150 },
   serve: { x: 830, y: 300, w: 170, h: 70 },
-  trash: { x: 830, y: 384, w: 170, h: 56 },
+  trash: { x: 1062, y: 292, w: 76, h: 112 },
 };
