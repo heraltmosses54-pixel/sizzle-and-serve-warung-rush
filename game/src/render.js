@@ -1,6 +1,9 @@
-// Every pixel of Sizzle & Serve is drawn here on a 1280x720 canvas: the kitchen, the order
-// board, the counter bins, the stove, the plate, the HUD and the menus. All art is original
-// vector drawing (no images, no fonts beyond the system sans), so the game needs no assets.
+// Every pixel of Sizzle & Serve is drawn here on a 1280x720 canvas: the warung
+// storefront (awning, string lights, night window, BUKA sign, cash register,
+// stools), the five-customer queue with thought bubbles and patience bars, the
+// kitchen, the order board, the counter bins, the stove, the plate, the HUD and
+// the menus. All art is original vector drawing (no images, no fonts beyond
+// the system sans), so the game needs no assets.
 import { INGREDIENTS, ING_BY_ID, LAYOUT, RECIPES, VIEW } from './config.js';
 import { SCREEN_OVER, SCREEN_PAUSE, SCREEN_PLAY, SCREEN_TITLE, sortedKey } from './world.js';
 
@@ -169,77 +172,90 @@ function drawBackground(ctx, t) {
   ctx.strokeStyle = 'rgba(180,130,60,0.35)'; ctx.lineWidth = 2;
   for (let y = 120; y < 470; y += 44) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(1280, y); ctx.stroke(); }
   for (let x = 0; x < 1280; x += 88) { ctx.beginPath(); ctx.moveTo(x, 96); ctx.lineTo(x, 470); ctx.stroke(); }
-  // Window with a sunny street: layered skyline, glowing sun, clouds, green below.
+  // Striped warung awning across the top of the wall, red and cream, scalloped edge.
+  for (let i = 0; i < 16; i += 1) {
+    ctx.fillStyle = i % 2 === 0 ? '#d9382b' : '#fff3df';
+    ctx.fillRect(i * 80, 96, 80, 28);
+    ctx.beginPath(); ctx.arc(i * 80 + 40, 124, 40, 0, Math.PI); ctx.fill();
+  }
+  ctx.fillStyle = '#8a5a2b'; ctx.fillRect(0, 96, 1280, 3);
+  // Window with a night street: moon, stars, dark skyline with lit windows.
   ctx.save();
   rr(ctx, 60, 130, 220, 150, 10); ctx.clip();
   const sky = ctx.createLinearGradient(0, 130, 0, 280);
-  sky.addColorStop(0, '#6fc3e8'); sky.addColorStop(0.65, '#a5dcef'); sky.addColorStop(1, '#d8f0d8');
+  sky.addColorStop(0, '#16233f'); sky.addColorStop(0.65, '#2c4a7a'); sky.addColorStop(1, '#3a5a8a');
   ctx.fillStyle = sky; ctx.fillRect(60, 130, 220, 150);
-  // Two small clouds.
-  ctx.fillStyle = 'rgba(255,255,255,0.92)';
-  for (const [cx, cy, s] of [[108, 152, 1], [196, 142, 0.8]]) {
-    ctx.beginPath();
-    ctx.arc(cx - 12 * s, cy, 8 * s, 0, 7); ctx.arc(cx, cy - 5 * s, 10 * s, 0, 7); ctx.arc(cx + 12 * s, cy, 8 * s, 0, 7);
-    ctx.fill();
+  // Stars.
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  for (const [sx, sy, sr] of [[84, 148, 1.6], [120, 140, 1.2], [160, 152, 1.8], [200, 142, 1.2], [252, 150, 1.6], [96, 172, 1.2], [150, 168, 1.4], [222, 176, 1.2], [262, 190, 1.4]]) {
+    ctx.beginPath(); ctx.arc(sx, sy, sr, 0, 7); ctx.fill();
   }
-  // Sun with a soft glow and short rays.
-  ctx.fillStyle = 'rgba(255,233,168,0.35)'; ctx.beginPath(); ctx.arc(232, 168, 36, 0, 7); ctx.fill();
-  ctx.fillStyle = 'rgba(255,233,168,0.55)'; ctx.beginPath(); ctx.arc(232, 168, 28, 0, 7); ctx.fill();
-  ctx.strokeStyle = '#ffd23e'; ctx.lineWidth = 3; ctx.lineCap = 'round';
-  for (let i = 0; i < 8; i += 1) {
-    const a = (i / 8) * Math.PI * 2;
-    ctx.beginPath();
-    ctx.moveTo(232 + Math.cos(a) * 25, 168 + Math.sin(a) * 25);
-    ctx.lineTo(232 + Math.cos(a) * 32, 168 + Math.sin(a) * 32);
-    ctx.stroke();
-  }
-  ctx.fillStyle = '#ffe066'; ctx.beginPath(); ctx.arc(232, 168, 19, 0, 7); ctx.fill();
-  ctx.strokeStyle = '#e8a91c'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(232, 168, 19, 0, 7); ctx.stroke();
-  // Far skyline, pale for depth.
-  ctx.fillStyle = '#a9c6d4';
+  // Moon with a soft glow.
+  ctx.fillStyle = 'rgba(255,244,200,0.3)'; ctx.beginPath(); ctx.arc(232, 168, 30, 0, 7); ctx.fill();
+  ctx.fillStyle = '#fff4c8'; ctx.beginPath(); ctx.arc(232, 168, 19, 0, 7); ctx.fill();
+  ctx.fillStyle = 'rgba(200,180,130,0.6)';
+  ctx.beginPath(); ctx.arc(226, 162, 3, 0, 7); ctx.arc(238, 174, 2.4, 0, 7); ctx.arc(236, 160, 2, 0, 7); ctx.fill();
+  // Far skyline, dark for depth.
+  ctx.fillStyle = '#1d2f4a';
   ctx.fillRect(64, 196, 34, 54); ctx.fillRect(104, 206, 26, 44); ctx.fillRect(196, 200, 30, 50); ctx.fillRect(232, 210, 34, 40);
-  ctx.fillStyle = '#c3d9e2'; ctx.fillRect(136, 214, 24, 36); ctx.fillRect(164, 204, 22, 46);
-  // Near buildings, warm and varied, with small lit and plain windows.
+  ctx.fillStyle = '#24365a'; ctx.fillRect(136, 214, 24, 36); ctx.fillRect(164, 204, 22, 46);
+  // Near buildings, dark silhouettes with small lit windows.
   const near = [
-    { x: 66, y: 216, w: 40, h: 34, c: '#8a5a2b' },
-    { x: 112, y: 228, w: 34, h: 22, c: '#a06a35' },
-    { x: 152, y: 210, w: 44, h: 40, c: '#6b4a2f' },
-    { x: 202, y: 224, w: 36, h: 26, c: '#8a5a2b' },
-    { x: 244, y: 214, w: 32, h: 36, c: '#a06a35' },
+    { x: 66, y: 216, w: 40, h: 34, c: '#141f33' },
+    { x: 112, y: 228, w: 34, h: 22, c: '#1a2942' },
+    { x: 152, y: 210, w: 44, h: 40, c: '#101a2c' },
+    { x: 202, y: 224, w: 36, h: 26, c: '#141f33' },
+    { x: 244, y: 214, w: 32, h: 36, c: '#1a2942' },
   ];
   for (const b of near) {
     ctx.fillStyle = b.c; ctx.fillRect(b.x, b.y, b.w, b.h);
-    ctx.strokeStyle = 'rgba(60,35,15,0.6)'; ctx.lineWidth = 1.5; ctx.strokeRect(b.x, b.y, b.w, b.h);
+    ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.lineWidth = 1.5; ctx.strokeRect(b.x, b.y, b.w, b.h);
     for (let wy = b.y + 6; wy < b.y + b.h - 4; wy += 11) {
       for (let wx = b.x + 6; wx < b.x + b.w - 4; wx += 11) {
-        ctx.fillStyle = ((wx + wy) % 22 === 0) ? '#ffe9a8' : '#3a2a18';
+        ctx.fillStyle = ((wx + wy) % 22 === 0) ? '#ffd23e' : '#0a1220';
         ctx.fillRect(wx, wy, 5, 6);
       }
     }
   }
-  // Green strip with bushes below.
-  ctx.fillStyle = '#58a34a'; ctx.fillRect(60, 250, 220, 30);
-  ctx.fillStyle = '#3f7a34'; ctx.beginPath(); ctx.arc(96, 258, 10, 0, 7); ctx.arc(116, 262, 8, 0, 7); ctx.arc(248, 260, 9, 0, 7); ctx.fill();
-  ctx.fillStyle = '#ff8fb0'; ctx.beginPath(); ctx.arc(120, 256, 2.5, 0, 7); ctx.arc(252, 254, 2.5, 0, 7); ctx.fill();
+  // Dark street with bushes below.
+  ctx.fillStyle = '#1e3a24'; ctx.fillRect(60, 250, 220, 30);
+  ctx.fillStyle = '#2a5230'; ctx.beginPath(); ctx.arc(96, 258, 10, 0, 7); ctx.arc(116, 262, 8, 0, 7); ctx.arc(248, 260, 9, 0, 7); ctx.fill();
   ctx.restore();
   // Frame and cross bars on top.
   ctx.strokeStyle = '#6b4a2f'; ctx.lineWidth = 6; rr(ctx, 60, 130, 220, 150, 10); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(170, 130); ctx.lineTo(170, 280); ctx.moveTo(60, 205); ctx.lineTo(280, 205); ctx.stroke();
+  // Neon BUKA (open) sign stuck in the window's bottom-right corner.
+  ctx.fillStyle = 'rgba(20,16,8,0.88)'; rr(ctx, 196, 232, 78, 40, 6); ctx.fill();
+  ctx.strokeStyle = '#ffd23e'; ctx.lineWidth = 2; rr(ctx, 196, 232, 78, 40, 6); ctx.stroke();
+  text(ctx, 'BUKA', 235, 246, 15, '#ffd23e', 'center');
+  text(ctx, 'OPEN', 235, 262, 9, '#fff', 'center');
   // Chalkboard menu on the right wall.
   ctx.fillStyle = '#2f4a3a'; rr(ctx, 980, 130, 240, 150, 8); ctx.fill();
   ctx.strokeStyle = '#c9a06a'; ctx.lineWidth = 5; rr(ctx, 980, 130, 240, 150, 8); ctx.stroke();
   text(ctx, "TODAY'S MENU", 1100, 152, 16, '#ffe9a8', 'center');
   for (let i = 0; i < 4; i += 1) text(ctx, RECIPES[i].name, 1000, 182 + i * 24, 14, '#f5f0dc');
   for (let i = 0; i < 4; i += 1) text(ctx, `${RECIPES[i].coins}c`, 1200, 182 + i * 24, 14, '#ffd23e', 'right');
-  // Hanging pans, in three different sizes.
-  const panSizes = [30, 20, 25];
+  // String lights draped under the awning over the queue (not over the menu board).
+  ctx.strokeStyle = '#3a2a18'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(0, 142);
+  for (let x = 0; x < 960; x += 160) ctx.quadraticCurveTo(x + 80, 164, x + 160, 142);
+  ctx.stroke();
+  for (let x = 80; x < 960; x += 160) {
+    const by = 152 + 6 * Math.sin(x / 160);
+    ctx.fillStyle = 'rgba(255,210,62,0.35)'; ctx.beginPath(); ctx.arc(x, by + 4, 10, 0, 7); ctx.fill();
+    ctx.fillStyle = '#ffd23e'; ctx.beginPath(); ctx.arc(x, by + 4, 5, 0, 7); ctx.fill();
+    ctx.fillStyle = '#8a6a42'; ctx.fillRect(x - 2, by - 2, 4, 4);
+  }
+  // Hanging pans on the wall under the window, in three different sizes.
+  const panSizes = [26, 18, 22];
   for (let i = 0; i < 3; i += 1) {
-    const x = 340 + i * 70;
+    const x = 100 + i * 70;
     const r = panSizes[i];
-    ctx.strokeStyle = '#5a4a3a'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x, 96); ctx.lineTo(x, 150 - r); ctx.stroke();
-    ctx.fillStyle = '#3a3a3a'; ctx.beginPath(); ctx.arc(x, 150, r, 0, 7); ctx.fill();
-    ctx.fillStyle = '#555'; ctx.beginPath(); ctx.arc(x, 150, Math.round(r * 0.7), 0, 7); ctx.fill();
-    ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.beginPath(); ctx.arc(x - r * 0.3, 150 - r * 0.3, Math.round(r * 0.18), 0, 7); ctx.fill();
+    const cy = 322;
+    ctx.strokeStyle = '#5a4a3a'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x, 288); ctx.lineTo(x, cy - r); ctx.stroke();
+    ctx.fillStyle = '#3a3a3a'; ctx.beginPath(); ctx.arc(x, cy, r, 0, 7); ctx.fill();
+    ctx.fillStyle = '#555'; ctx.beginPath(); ctx.arc(x, cy, Math.round(r * 0.7), 0, 7); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.beginPath(); ctx.arc(x - r * 0.3, cy - r * 0.3, Math.round(r * 0.18), 0, 7); ctx.fill();
   }
   // Steam wisp over the stove, drifting with time.
   ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 4; ctx.lineCap = 'round';
@@ -250,9 +266,142 @@ function drawBackground(ctx, t) {
   // Floor.
   ctx.fillStyle = '#b07a45'; ctx.fillRect(0, 470, 1280, 250);
   ctx.fillStyle = '#9c6a38'; for (let x = 0; x < 1280; x += 128) ctx.fillRect(x, 470, 4, 250);
+  // Cash register on a little side table under the serve bell.
+  ctx.fillStyle = '#6b4423'; rr(ctx, 852, 428, 136, 32, 6); ctx.fill();
+  ctx.strokeStyle = '#4a2e15'; ctx.lineWidth = 2; rr(ctx, 852, 428, 136, 32, 6); ctx.stroke();
+  ctx.fillStyle = '#5a3a18'; ctx.fillRect(862, 460, 10, 10); ctx.fillRect(968, 460, 10, 10);
+  ctx.fillStyle = '#3a3a3a'; rr(ctx, 872, 392, 96, 36, 6); ctx.fill();
+  ctx.strokeStyle = '#222'; ctx.lineWidth = 2; rr(ctx, 872, 392, 96, 36, 6); ctx.stroke();
+  ctx.fillStyle = '#ffd23e'; rr(ctx, 882, 398, 42, 14, 3); ctx.fill();
+  text(ctx, 'Rp', 903, 406, 10, '#3a2a18', 'center');
+  ctx.fillStyle = '#f5f0dc';
+  for (let i = 0; i < 4; i += 1) ctx.fillRect(884 + i * 13, 417, 9, 6);
+  ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(878, 396); ctx.lineTo(878, 424); ctx.stroke();
+}
+
+// Two wooden stools where customers sit at the counter. Drawn after the counter
+// so they sit in front of it, not under its wood fill.
+function drawStools(ctx) {
+  for (const sx of [120, 1160]) {
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    ctx.beginPath(); ctx.ellipse(sx, 712, 52, 7, 0, 0, 7); ctx.fill();
+    ctx.strokeStyle = '#5a3a18'; ctx.lineWidth = 5; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(sx - 32, 656); ctx.lineTo(sx - 42, 708); ctx.moveTo(sx + 32, 656); ctx.lineTo(sx + 42, 708); ctx.stroke();
+    ctx.strokeStyle = '#6b4423'; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(sx - 37, 686); ctx.lineTo(sx + 37, 686); ctx.stroke();
+    ctx.fillStyle = '#8a5a2b'; rr(ctx, sx - 46, 636, 92, 18, 8); ctx.fill();
+    ctx.strokeStyle = '#5a3a18'; ctx.lineWidth = 2; rr(ctx, sx - 46, 636, 92, 18, 8); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,220,170,0.5)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(sx - 38, 640); ctx.lineTo(sx + 38, 640); ctx.stroke();
+  }
 }
 
 function patienceColor(frac) { return frac > 0.5 ? '#58a34a' : frac > 0.25 ? '#f2a541' : '#d9382b'; }
+
+// The customer queue: one illustrated customer per order ticket, plus waiting
+// customers behind them, so the stall reads as a busy warung instead of an
+// empty kitchen. A customer's face and patience bar mirror their ticket;
+// a VIP order's customer gets a gold outline.
+const QUEUE_X = [400, 530, 660, 790, 920];
+const QUEUE_ROSTER = [
+  { skin: '#c98d5f', top: '#2f7a2e', hat: 'ojek' }, // ojek driver, green jacket + helmet
+  { skin: '#f2c89b', top: '#d9382b', hat: 'kerudung' }, // ibu with a red kerudung
+  { skin: '#e8b88a', top: '#3f6fb5', hat: 'cap' }, // student with a blue cap
+  { skin: '#f2c89b', top: '#f5f0dc', hat: 'tie' }, // office worker, white shirt + tie
+  { skin: '#c98d5f', top: '#f2a541', hat: 'batik' }, // pak in a batik shirt
+];
+
+function drawCustomer(ctx, cx, spec, frac, vip, recipe) {
+  // VIP: gold outline around the whole customer.
+  if (vip) {
+    ctx.strokeStyle = '#f2a541'; ctx.lineWidth = 4;
+    rr(ctx, cx - 54, 164, 108, 146, 12); ctx.stroke();
+    ctx.fillStyle = '#b87a1d'; rr(ctx, cx - 22, 158, 44, 14, 4); ctx.fill();
+    text(ctx, 'VIP', cx, 166, 10, '#fff', 'center');
+  }
+  // Thought bubble: the ordered dish, or an ellipsis while waiting.
+  ctx.fillStyle = '#fff'; rr(ctx, cx - 48, 170, 96, 42, 10); ctx.fill();
+  ctx.strokeStyle = vip ? '#f2a541' : '#c9a06a'; ctx.lineWidth = 2; rr(ctx, cx - 48, 170, 96, 42, 10); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx - 8, 212); ctx.lineTo(cx + 8, 212); ctx.lineTo(cx, 224); ctx.closePath(); ctx.fill(); ctx.stroke();
+  if (recipe) {
+    recipe.needs.forEach((id, j) => drawIngredientIcon(ctx, id, cx - 28 + j * 28, 191, 22, true));
+  } else {
+    text(ctx, '…', cx, 192, 20, '#8a6a42', 'center');
+  }
+  // Head.
+  const hy = 228;
+  if (spec.hat === 'kerudung') {
+    // Kerudung: a scarf framing the face, draping to the shoulders.
+    ctx.fillStyle = spec.top; ctx.beginPath(); ctx.arc(cx, hy, 20, 0, 7); ctx.fill();
+    ctx.fillStyle = spec.top; rr(ctx, cx - 20, hy + 6, 40, 22, 8); ctx.fill();
+  }
+  ctx.fillStyle = spec.skin; ctx.beginPath(); ctx.arc(cx, hy, 15, 0, 7); ctx.fill();
+  ctx.strokeStyle = 'rgba(60,35,15,0.5)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(cx, hy, 15, 0, 7); ctx.stroke();
+  if (spec.hat === 'ojek') {
+    // Green helmet with a visor line.
+    ctx.fillStyle = '#2f7a2e'; ctx.beginPath(); ctx.arc(cx, hy - 3, 16, Math.PI, 0); ctx.fill();
+    ctx.fillStyle = '#2f7a2e'; rr(ctx, cx - 16, hy - 6, 32, 6, 3); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(cx - 12, hy - 10); ctx.quadraticCurveTo(cx, hy - 14, cx + 12, hy - 10); ctx.stroke();
+  } else if (spec.hat === 'cap') {
+    ctx.fillStyle = '#3f6fb5'; ctx.beginPath(); ctx.arc(cx, hy - 2, 15, Math.PI, 0); ctx.fill();
+    ctx.fillStyle = '#2a4a7a'; rr(ctx, cx - 2, hy - 8, 20, 5, 2); ctx.fill();
+  } else if (spec.hat === 'batik') {
+    ctx.fillStyle = '#3a2a18'; ctx.beginPath(); ctx.arc(cx, hy - 4, 15, Math.PI * 0.95, Math.PI * 2.05); ctx.fill();
+  } else if (spec.hat === 'tie') {
+    ctx.fillStyle = '#3a2a18'; ctx.beginPath(); ctx.arc(cx, hy - 4, 15, Math.PI * 0.95, Math.PI * 2.05); ctx.fill();
+  }
+  // Face: eyes and a mouth that mirrors the patience bar.
+  ctx.fillStyle = '#3a2a18';
+  ctx.beginPath(); ctx.arc(cx - 5, hy - 1, 1.6, 0, 7); ctx.arc(cx + 5, hy - 1, 1.6, 0, 7); ctx.fill();
+  ctx.strokeStyle = '#3a2a18'; ctx.lineWidth = 1.8; ctx.lineCap = 'round';
+  ctx.beginPath();
+  if (frac > 0.5) { ctx.arc(cx, hy + 4, 5, 0.15 * Math.PI, 0.85 * Math.PI); }
+  else if (frac > 0.25) { ctx.moveTo(cx - 4, hy + 7); ctx.lineTo(cx + 4, hy + 7); }
+  else { ctx.arc(cx, hy + 10, 5, 1.15 * Math.PI, 1.85 * Math.PI); }
+  ctx.stroke();
+  if (frac <= 0.25) { ctx.fillStyle = '#7ec8e3'; ctx.beginPath(); ctx.arc(cx + 14, hy - 8, 2.6, 0, 7); ctx.fill(); }
+  // Body: shoulders to the counter line.
+  ctx.fillStyle = spec.top;
+  ctx.beginPath();
+  ctx.moveTo(cx - 32, 298); ctx.lineTo(cx - 26, 246);
+  ctx.quadraticCurveTo(cx, 238, cx + 26, 246); ctx.lineTo(cx + 32, 298); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(60,35,15,0.5)'; ctx.lineWidth = 2; ctx.stroke();
+  if (spec.hat === 'tie') {
+    ctx.fillStyle = '#d9382b';
+    ctx.beginPath(); ctx.moveTo(cx - 5, 250); ctx.lineTo(cx + 5, 250); ctx.lineTo(cx, 272); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(cx - 8, 244); ctx.lineTo(cx, 250); ctx.lineTo(cx + 8, 244); ctx.closePath(); ctx.fill();
+  } else if (spec.hat === 'batik') {
+    ctx.fillStyle = 'rgba(60,35,15,0.55)';
+    for (const [dx, dy] of [[-16, 258], [0, 252], [16, 258], [-8, 272], [8, 272], [0, 286]]) {
+      ctx.beginPath(); ctx.arc(cx + dx, dy, 2.2, 0, 7); ctx.fill();
+    }
+  } else if (spec.hat === 'kerudung') {
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.beginPath(); ctx.moveTo(cx - 20, 250); ctx.lineTo(cx + 20, 250); ctx.lineTo(cx + 14, 258); ctx.lineTo(cx - 14, 258); ctx.closePath(); ctx.fill();
+  }
+  // Patience bar under the feet (order customers only).
+  if (recipe) {
+    ctx.fillStyle = '#e8dcc0'; rr(ctx, cx - 42, 300, 84, 6, 3); ctx.fill();
+    ctx.fillStyle = patienceColor(frac); rr(ctx, cx - 42, 300, 84 * frac, 6, 3); ctx.fill();
+  }
+}
+
+function drawQueue(ctx, world) {
+  const n = world.orders.length;
+  for (let i = 0; i < 5; i += 1) {
+    const cx = QUEUE_X[i];
+    const spec = QUEUE_ROSTER[i];
+    if (i < n) {
+      const order = world.orders[i];
+      const frac = Math.max(0, order.patience / order.max);
+      drawCustomer(ctx, cx, spec, frac, order.vip, order.recipe);
+    } else {
+      drawCustomer(ctx, cx, spec, 1, false, null); // waiting for a table
+    }
+  }
+}
 
 function drawOrderBoard(ctx, world, t) {
   const b = LAYOUT.orderBoard;
@@ -473,7 +622,7 @@ function drawPlateArea(ctx, world) {
   ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 3;
   ctx.beginPath(); ctx.moveTo(bx - 22, by - 28); ctx.lineTo(bx - 18, by + 26); ctx.stroke();
   text(ctx, 'TRASH (T)', bx, by + 50, 13, '#5a3a18', 'center');
-  if (match) text(ctx, `Matches: ${match.recipe.name} — ring the bell!`, p.x + p.w / 2, p.y - 16, 15, '#2f6b28', 'center');
+  if (match) text(ctx, `Matches: ${match.recipe.name} — ring the bell!`, 915, 382, 14, '#2f6b28', 'center');
 }
 
 function drawFloaters(ctx, world) {
@@ -550,11 +699,13 @@ export function render(ctx, world, sound, t) {
     ctx.translate((Math.random() * 2 - 1) * m, (Math.random() * 2 - 1) * m);
   }
   drawBackground(ctx, t);
+  drawQueue(ctx, world);
   drawOrderBoard(ctx, world, t);
   drawTimer(ctx, world);
   drawScore(ctx, world, sound);
   drawBins(ctx, world, t);
   drawPlateArea(ctx, world);
+  drawStools(ctx);
   drawFloaters(ctx, world);
   drawParticles(ctx, world);
   if (world.screen === SCREEN_TITLE) drawTitle(ctx, world);
