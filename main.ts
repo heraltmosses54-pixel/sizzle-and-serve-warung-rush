@@ -10,9 +10,12 @@
 // from 8 ingredients on the counter; 3 stove burners where raw food cooks in 3.5s and burns
 // if left 8s after READY (trashed, ingredient lost); an order board of up to 3 tickets
 // with draining patience bars, flashing urgency, customer mood faces and random VIP rush
-// orders worth double coins; a five-customer queue at the warung (ojek driver, ibu,
-// student, office worker, pak in batik) with thought bubbles showing each ordered dish
-// and patience bars mirroring the tickets, under a striped awning with string lights,
+// orders worth double coins; five big customers standing INSIDE the warung on a
+// wooden waiting deck (ojek driver, ibu, student, office worker, pak in batik),
+// feet planted on one floor line with a soft shadow under each pair of shoes, with
+// thought bubbles showing each ordered dish and patience bars mirroring the tickets,
+// against a detailed wood-plank wall (SATE AYAM poster, menu board, hanging banner
+// and plant, crack and stains), under a striped awning with string lights,
 // a night sky with moon, a BUKA sign, a cash register and stools; a 3-slot plate and a
 // + combo bonuses; 3 hearts (wrong dish or walk-out costs one); levels every 5 dishes
 // (faster spawns, shorter patience); juice throughout — particle bursts, floating "+Rp"

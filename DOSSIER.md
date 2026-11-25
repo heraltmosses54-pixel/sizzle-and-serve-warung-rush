@@ -55,14 +55,20 @@ on mistakes, and a coin-pop in the HUD.
 
 ## What it shows (screenshots)
 
-- `1-serve.jpg` — the busy-service cover: a five-customer queue at the
-  warung (ojek driver, ibu, student, office worker, pak in batik) under a
-  red-and-cream awning and string lights, each with a thought bubble showing
-  their dish and a patience bar; night sky with moon in the window, a BUKA
-  sign, cash register and stools. Two dishes already served (coins on the
-  board, COMBO x2), a finished Sate Ayam on the plate with the SERVE button
-  lit gold ("Matches: Sate Ayam — ring the bell!"), a fresh egg mid-cook on
-  a burner with its progress ring, timer at 1:27.
+- `1-serve.jpg` — the busy-service cover: five big customers standing INSIDE
+  the warung on a wooden waiting deck (ojek driver, ibu, student, office
+  worker, pak in batik), roughly twice their old size, feet planted on one
+  floor line with a soft shadow under each pair of shoes — nobody floats —
+  each with a thought bubble showing their dish and a patience bar on the
+  deck face; the wall behind them is a real warung wall now (wood planks
+  with grain and nails, a framed SATE AYAM poster, a TODAY'S MENU board, a
+  red SATE/MIE/NASI banner, a hanging plant, a crack and damp stains), under
+  a red-and-cream awning and string lights, night sky with moon in the
+  window, a BUKA sign, cash register and stools. The plate sits to the right
+  of the queue so all five customers stay fully visible. Two dishes already
+  served (coins on the board, COMBO x2), a finished Sate Ayam on the plate
+  with the SERVE button lit gold ("Matches: Sate Ayam — ring the bell!"),
+  a fresh egg mid-cook on a burner with its progress ring, timer at 1:27.
 - `2-play.jpg` — the stove at full tilt: all three burners cooking with steam,
   a dish mid-assembly (rice + noodles on the plate), two orders on the board,
   and the queue waiting under the awning.
@@ -85,10 +91,13 @@ on mistakes, and a coin-pop in the HUD.
   mid-assembly, a timer, and a plate ready to serve are all visible in the
   screenshots, which are real renders of the game's own code (staged with
   `?shot=<name>&seed=1`, deterministic per seed). The scene is a full warung
-  storefront, not just a counter: a five-customer queue (ojek driver, ibu,
+  storefront, not just a counter: five big customers (ojek driver, ibu,
   student, office worker, pak in batik — VIP customers get a gold outline)
-  with thought bubbles showing each ordered dish and patience bars mirroring
-  the tickets, a striped awning, string lights, a night sky with moon, a
+  standing inside the warung on a wooden waiting deck, feet planted with a
+  shadow under each pair of shoes, with thought bubbles showing each ordered
+  dish and patience bars mirroring the tickets, against a detailed wood-plank
+  wall (SATE AYAM poster, menu board, hanging banner and plant, crack and
+  stains), a striped awning, string lights, a night sky with moon, a
   BUKA sign, a cash register and stools.
 - `main.ts` (Node 22) copies `game/` and `screenshots/` to the output and
   writes `dossier.json` with the kit's vendored `vendor/makefun-game.ts`
