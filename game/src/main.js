@@ -48,6 +48,14 @@ if (params.has('shot')) {
       world.step(STEP);
       acc -= STEP;
     }
+    // Sound cues the world raised while stepping (a burner finishing, an order
+    // expiring, food burning): play each once, then clear the queue.
+    for (const ev of world.events) {
+      if (ev === 'cookDone') sound.cookDone();
+      else if (ev === 'expired') sound.expire();
+      else if (ev === 'burned') sound.burn();
+    }
+    world.events.length = 0;
     render(ctx, world, sound, now / 1000);
     if (world.screen === 'play') {
       status.textContent = `Sizzle & Serve: ${world.served} dishes served, ${world.coins} coins, ${Math.ceil(world.timeLeft)} seconds left in the shift.`;

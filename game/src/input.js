@@ -61,6 +61,7 @@ export class InputHandler {
         const result = world.takeBurner(i);
         if (result === 'plate') this.sound.add();
         else if (result === 'full') this.sound.wrong();
+        else if (result === 'burnt') this.sound.burn();
         return;
       }
     }
@@ -73,8 +74,8 @@ export class InputHandler {
 
   serve() {
     const result = this.world.serve();
-    if (result === 'served' || result === 'level') { this.sound.serve(); this.sound.coin(); }
-    else if (result === 'level') { this.sound.levelUp(); }
+    if (result === 'served') { this.sound.serve(); this.sound.coin(); }
+    else if (result === 'level') { this.sound.serve(); this.sound.coin(); this.sound.levelUp(); }
     else if (result === 'wrong') this.sound.wrong();
     else if (result === 'empty') this.sound.click();
   }

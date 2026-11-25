@@ -91,7 +91,13 @@ export function drawIngredientIcon(ctx, id, cx, cy, s, cooked = false) {
     ctx.fillStyle = '#f2e3c9'; rr(ctx, -9 * u, -20 * u, 18 * u, 34 * u, 4 * u); ctx.fill(); ctx.stroke();
     ctx.fillStyle = '#8a5a2b'; rr(ctx, -9 * u, -4 * u, 18 * u, 18 * u, 3 * u); ctx.fill();
     ctx.fillStyle = '#5a3a18'; rr(ctx, -5 * u, -26 * u, 10 * u, 8 * u, 2 * u); ctx.fill();
-    ctx.fillStyle = '#fff'; ctx.font = `bold ${10 * u}px system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.fillText('ABC', 0, 6 * u);
+    // The house sauce: our own "KECAP" label, shrunk to fit the bottle at any size.
+    ctx.fillStyle = '#fff';
+    let fs = 10 * u;
+    ctx.font = `bold ${fs}px system-ui, sans-serif`;
+    const labelW = ctx.measureText('KECAP').width;
+    if (labelW > 16 * u) { fs *= (16 * u) / labelW; ctx.font = `bold ${fs}px system-ui, sans-serif`; }
+    ctx.textAlign = 'center'; ctx.fillText('KECAP', 0, 6 * u);
   }
   ctx.restore();
 }
@@ -135,7 +141,7 @@ function drawBackground(ctx, t) {
 
 function patienceColor(frac) { return frac > 0.5 ? '#58a34a' : frac > 0.25 ? '#f2a541' : '#d9382b'; }
 
-function drawOrderBoard(ctx, world) {
+function drawOrderBoard(ctx, world, t) {
   const b = LAYOUT.orderBoard;
   ctx.fillStyle = '#5a3a18'; rr(ctx, b.x, b.y, b.w, b.h, 10); ctx.fill();
   ctx.fillStyle = '#f5e6c8'; rr(ctx, b.x + 4, b.y + 4, b.w - 8, b.h - 8, 8); ctx.fill();
@@ -144,13 +150,34 @@ function drawOrderBoard(ctx, world) {
   world.orders.forEach((order, i) => {
     const x = b.x + 92 + i * 152;
     const y = b.y + 8;
-    ctx.fillStyle = '#fff'; rr(ctx, x, y, 144, 60, 8); ctx.fill();
-    ctx.strokeStyle = '#c9a06a'; ctx.lineWidth = 2; rr(ctx, x, y, 144, 60, 8); ctx.stroke();
+    const frac = Math.max(0, order.patience / order.max);
+    ctx.fillStyle = order.vip ? '#fff3c4' : '#fff'; rr(ctx, x, y, 144, 60, 8); ctx.fill();
+    // VIP rush orders get a gold ticket; a ticket about to walk out flashes red.
+    if (order.vip) { ctx.strokeStyle = '#f2a541'; ctx.lineWidth = 3; }
+    else if (frac < 0.15) { ctx.strokeStyle = Math.floor(t * 3) % 2 === 0 ? '#d9382b' : '#fff'; ctx.lineWidth = 3; }
+    else { ctx.strokeStyle = '#c9a06a'; ctx.lineWidth = 2; }
+    rr(ctx, x, y, 144, 60, 8); ctx.stroke();
+    if (order.vip) { ctx.fillStyle = '#b87a1d'; rr(ctx, x + 96, y + 2, 46, 14, 4); ctx.fill(); text(ctx, 'VIP 2x', x + 119, y + 10, 10, '#fff', 'center'); }
     text(ctx, order.recipe.name, x + 8, y + 13, 13, '#3a2a18');
     order.recipe.needs.forEach((id, j) => drawIngredientIcon(ctx, id, x + 20 + j * 34, y + 34, 30, true));
-    const frac = Math.max(0, order.patience / order.max);
     ctx.fillStyle = '#e8dcc0'; rr(ctx, x + 8, y + 52, 128, 6, 3); ctx.fill();
     ctx.fillStyle = patienceColor(frac); rr(ctx, x + 8, y + 52, 128 * frac, 6, 3); ctx.fill();
+    // The waiting customer, drawn on the ticket: their face mirrors the patience bar.
+    // (VIP tickets skip the face — the gold ticket already marks them.)
+    if (!order.vip) {
+      const fx = x + 130;
+      const fy = y + 16;
+      ctx.fillStyle = '#f2c89b'; ctx.beginPath(); ctx.arc(fx, fy, 9, 0, 7); ctx.fill();
+      ctx.fillStyle = '#3a2a18';
+      ctx.beginPath(); ctx.arc(fx - 3, fy - 2, 1.4, 0, 7); ctx.arc(fx + 3, fy - 2, 1.4, 0, 7); ctx.fill();
+      ctx.strokeStyle = '#3a2a18'; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
+      ctx.beginPath();
+      if (frac > 0.5) { ctx.arc(fx, fy + 2, 4, 0.15 * Math.PI, 0.85 * Math.PI); }
+      else if (frac > 0.25) { ctx.moveTo(fx - 3, fy + 5); ctx.lineTo(fx + 3, fy + 5); }
+      else { ctx.arc(fx, fy + 8, 4, 1.15 * Math.PI, 1.85 * Math.PI); }
+      ctx.stroke();
+      if (frac <= 0.25) { ctx.fillStyle = '#7ec8e3'; ctx.beginPath(); ctx.arc(fx + 10, fy - 6, 2.4, 0, 7); ctx.fill(); }
+    }
   });
 }
 
@@ -170,7 +197,13 @@ function drawScore(ctx, world, sound) {
   ctx.fillStyle = '#ffd23e'; ctx.beginPath(); ctx.arc(b.x + 28, b.y + 26, 11, 0, 7); ctx.fill();
   ctx.strokeStyle = '#c08a1d'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(b.x + 28, b.y + 26, 11, 0, 7); ctx.stroke();
   text(ctx, 'C', b.x + 28, b.y + 27, 15, '#8a5a18', 'center');
-  text(ctx, `${world.coins}`, b.x + 48, b.y + 26, 22, '#ffd23e');
+  // The coin count pops bigger for a beat after every serve.
+  ctx.save();
+  const pop = 1 + 0.3 * world.coinPop;
+  ctx.translate(b.x + 48, b.y + 26);
+  ctx.scale(pop, pop);
+  text(ctx, `${world.coins}`, 0, 0, 22, '#ffd23e');
+  ctx.restore();
   text(ctx, `Served ${world.served}  ·  Lv ${world.level}`, b.x + 16, b.y + 56, 14, '#dfe8f0');
   if (world.combo >= 2) text(ctx, `COMBO x${world.combo}`, b.x + 200, b.y + 26, 18, '#ff9d5c');
   for (let i = 0; i < 3; i += 1) {
@@ -187,7 +220,7 @@ function drawScore(ctx, world, sound) {
   text(ctx, sound.muted ? '✕' : '♪', MUTE_BTN.x + 21, MUTE_BTN.y + 22, 18, '#fff', 'center');
 }
 
-function drawBins(ctx, world) {
+function drawBins(ctx, world, t) {
   ctx.fillStyle = '#6b4a2f'; ctx.fillRect(0, LAYOUT.counter.y, 1280, 14);
   ctx.fillStyle = '#c98d54'; ctx.fillRect(0, LAYOUT.counter.y + 14, 1280, 236);
   text(ctx, 'COUNTER — click or press 1-8', 24, 492, 13, '#5a3a18');
@@ -216,16 +249,29 @@ function drawBins(ctx, world) {
     ctx.fillStyle = '#222'; ctx.beginPath(); ctx.arc(r.x + 50, r.y + 48, 40, 0, 7); ctx.fill();
     ctx.strokeStyle = '#666'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(r.x + 50, r.y + 48, 40, 0, 7); ctx.stroke();
     if (burner) {
-      if (!burner.done) {
+      if (burner.burnt) {
+        // Charred: blackened food, a grey smoke curl, and a BURNT! label — click to trash it.
+        drawIngredientIcon(ctx, burner.id, r.x + 50, r.y + 48, 46, true);
+        ctx.fillStyle = 'rgba(20,20,20,0.55)'; ctx.beginPath(); ctx.arc(r.x + 50, r.y + 48, 38, 0, 7); ctx.fill();
+        ctx.strokeStyle = 'rgba(200,200,200,0.7)'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+        const wx = r.x + 50 + Math.sin(t * 2 + i * 2) * 5;
+        ctx.beginPath(); ctx.moveTo(wx, r.y + 16); ctx.quadraticCurveTo(wx + 8, r.y, wx - 4, r.y - 14); ctx.stroke();
+        text(ctx, 'BURNT!', r.x + 50, r.y + 88, 12, '#ff6b5e', 'center');
+      } else if (!burner.done) {
         ctx.fillStyle = '#ff7a2f';
         ctx.beginPath(); ctx.moveTo(r.x + 50, r.y + 48);
         ctx.arc(r.x + 50, r.y + 48, 38, -Math.PI / 2, -Math.PI / 2 + burner.progress * Math.PI * 2);
         ctx.closePath(); ctx.fill();
+        // Steam curls while food cooks.
+        ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+        const wx = r.x + 50 + Math.sin(t * 1.8 + i * 2.4) * 5;
+        ctx.beginPath(); ctx.moveTo(wx, r.y + 14); ctx.quadraticCurveTo(wx + 8, r.y - 2, wx - 4, r.y - 16); ctx.stroke();
+        drawIngredientIcon(ctx, burner.id, r.x + 50, r.y + 48, 46, false);
       } else {
         ctx.fillStyle = '#ffd23e'; ctx.beginPath(); ctx.arc(r.x + 50, r.y + 48, 42, 0, 7); ctx.fill();
         text(ctx, 'READY!', r.x + 50, r.y + 88, 12, '#ffd23e', 'center');
+        drawIngredientIcon(ctx, burner.id, r.x + 50, r.y + 48, 46, true);
       }
-      drawIngredientIcon(ctx, burner.id, r.x + 50, r.y + 48, 46, burner.done);
     } else {
       text(ctx, 'empty', r.x + 50, r.y + 48, 13, '#888', 'center');
     }
@@ -236,22 +282,32 @@ function drawPlateArea(ctx, world) {
   const p = LAYOUT.plate;
   // Wooden serving board under the plate.
   ctx.fillStyle = '#8a5a2b'; rr(ctx, p.x - 24, p.y + 96, p.w + 48, 40, 12); ctx.fill();
-  // The plate.
-  ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(p.x + p.w / 2, p.y + 66, 150, 62, 0, 0, 7); ctx.fill();
-  ctx.strokeStyle = '#d8c9a8'; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(p.x + p.w / 2, p.y + 66, 150, 62, 0, 0, 7); ctx.stroke();
-  ctx.strokeStyle = '#e8dcc0'; ctx.beginPath(); ctx.ellipse(p.x + p.w / 2, p.y + 66, 118, 46, 0, 0, 7); ctx.stroke();
+  // The plate, squashed wide and flat for a beat after every serve.
+  const sq = world.serveAnim;
+  ctx.save();
+  ctx.translate(p.x + p.w / 2, p.y + 66);
+  ctx.scale(1 + 0.07 * sq, 1 - 0.09 * sq);
+  ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(0, 0, 150, 62, 0, 0, 7); ctx.fill();
+  ctx.strokeStyle = '#d8c9a8'; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(0, 0, 150, 62, 0, 0, 7); ctx.stroke();
+  ctx.strokeStyle = '#e8dcc0'; ctx.beginPath(); ctx.ellipse(0, 0, 118, 46, 0, 0, 7); ctx.stroke();
   // Assembled ingredients on the plate.
   world.plate.forEach((id, i) => {
-    const cx = p.x + 70 + i * 90;
-    drawIngredientIcon(ctx, id, cx, p.y + 62, 62, true);
+    const cx = -90 + i * 90;
+    drawIngredientIcon(ctx, id, cx, -4, 62, true);
   });
+  ctx.restore();
   text(ctx, world.plate.length === 0 ? 'Your plate — build a dish here' : `${world.plate.length} / 3 on the plate`, p.x + p.w / 2, p.y + 158, 14, '#3a2a18', 'center');
-  // Serve bell and trash.
+  // Serve bell and trash. The bell swells for a beat after every serve.
   const match = world.plate.length > 0 && world.findMatch();
-  ctx.fillStyle = match ? '#ffd23e' : '#c9a06a'; rr(ctx, SERVE_BTN.x, SERVE_BTN.y, SERVE_BTN.w, SERVE_BTN.h, 12); ctx.fill();
-  ctx.strokeStyle = '#8a6a42'; ctx.lineWidth = 2; rr(ctx, SERVE_BTN.x, SERVE_BTN.y, SERVE_BTN.w, SERVE_BTN.h, 12); ctx.stroke();
-  text(ctx, 'SERVE', SERVE_BTN.x + SERVE_BTN.w / 2, SERVE_BTN.y + 26, 22, '#3a2a18', 'center');
-  text(ctx, 'S / Space', SERVE_BTN.x + SERVE_BTN.w / 2, SERVE_BTN.y + 52, 12, '#5a3a18', 'center');
+  ctx.save();
+  ctx.translate(SERVE_BTN.x + SERVE_BTN.w / 2, SERVE_BTN.y + SERVE_BTN.h / 2);
+  const bs = 1 + 0.12 * sq;
+  ctx.scale(bs, bs);
+  ctx.fillStyle = match ? '#ffd23e' : '#c9a06a'; rr(ctx, -SERVE_BTN.w / 2, -SERVE_BTN.h / 2, SERVE_BTN.w, SERVE_BTN.h, 12); ctx.fill();
+  ctx.strokeStyle = '#8a6a42'; ctx.lineWidth = 2; rr(ctx, -SERVE_BTN.w / 2, -SERVE_BTN.h / 2, SERVE_BTN.w, SERVE_BTN.h, 12); ctx.stroke();
+  text(ctx, 'SERVE', 0, -9, 22, '#3a2a18', 'center');
+  text(ctx, 'S / Space', 0, 17, 12, '#5a3a18', 'center');
+  ctx.restore();
   ctx.fillStyle = '#e8e0d0'; rr(ctx, TRASH_BTN.x, TRASH_BTN.y, TRASH_BTN.w, TRASH_BTN.h, 10); ctx.fill();
   ctx.strokeStyle = '#b09a7a'; rr(ctx, TRASH_BTN.x, TRASH_BTN.y, TRASH_BTN.w, TRASH_BTN.h, 10); ctx.stroke();
   text(ctx, 'Trash plate  (T)', TRASH_BTN.x + TRASH_BTN.w / 2, TRASH_BTN.y + 28, 15, '#5a3a18', 'center');
@@ -313,17 +369,34 @@ function drawOver(ctx, world) {
   text(ctx, 'PLAY AGAIN', AGAIN_BTN.x + 150, AGAIN_BTN.y + 32, 22, '#fff', 'center');
 }
 
+function drawParticles(ctx, world) {
+  for (const p of world.particles) {
+    ctx.globalAlpha = Math.max(0, p.life / p.max);
+    ctx.fillStyle = p.color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, 7); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
 /** Draw one frame. `t` is wall-clock seconds, for the steam drift. */
 export function render(ctx, world, sound, t) {
   ctx.clearRect(0, 0, VIEW.width, VIEW.height);
+  ctx.save();
+  // A mistake shakes the whole kitchen for a beat, decaying fast.
+  if (world.shake > 0) {
+    const m = world.shake * 24;
+    ctx.translate((Math.random() * 2 - 1) * m, (Math.random() * 2 - 1) * m);
+  }
   drawBackground(ctx, t);
-  drawOrderBoard(ctx, world);
+  drawOrderBoard(ctx, world, t);
   drawTimer(ctx, world);
   drawScore(ctx, world, sound);
-  drawBins(ctx, world);
+  drawBins(ctx, world, t);
   drawPlateArea(ctx, world);
   drawFloaters(ctx, world);
+  drawParticles(ctx, world);
   if (world.screen === SCREEN_TITLE) drawTitle(ctx, world);
   else if (world.screen === SCREEN_PAUSE) drawPause(ctx);
   else if (world.screen === SCREEN_OVER) drawOver(ctx, world);
+  ctx.restore();
 }
