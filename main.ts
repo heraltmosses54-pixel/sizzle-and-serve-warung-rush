@@ -10,7 +10,10 @@
 // from 8 ingredients on the counter; 3 stove burners where raw food cooks in 3.5s and burns
 // if left 8s after READY (trashed, ingredient lost); an order board of up to 3 tickets
 // with draining patience bars, flashing urgency, customer mood faces and random VIP rush
-// orders worth double coins; a 3-slot plate and a serve bell paying coins + patience tips
+// orders worth double coins; a five-customer queue at the warung (ojek driver, ibu,
+// student, office worker, pak in batik) with thought bubbles showing each ordered dish
+// and patience bars mirroring the tickets, under a striped awning with string lights,
+// a night sky with moon, a BUKA sign, a cash register and stools; a 3-slot plate and a
 // + combo bonuses; 3 hearts (wrong dish or walk-out costs one); levels every 5 dishes
 // (faster spawns, shorter patience); juice throughout — particle bursts, floating "+Rp"
 // text, squash-and-stretch on the serve button and plate, screen shake on mistakes,
@@ -18,8 +21,8 @@
 // mute); flat vector art drawn in code and all sound synthesised, so the game needs no
 // assets, no fonts beyond system-ui, and makes no network request. Screenshots are real
 // renders of the game's own code, staged deterministically with ?shot=<name>&seed=1:
-// 1-serve (busy mid-shift cover), 2-play (full burners + steam), 3-rush (urgency moment),
-// 4-end (results with stars and coins). Build your own cooking game in its place, put
+// 1-serve (busy mid-shift cover: five-customer queue + storefront), 2-play (full burners + steam),
+// 3-rush (urgency moment), 4-end (results with stars and coins). Build your own cooking game in its place, put
 // your 3 or 4 PNG or JPEG screenshots in screenshots/ (the first by name is the cover)
 // and run it.
 //

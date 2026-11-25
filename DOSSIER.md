@@ -55,15 +55,20 @@ on mistakes, and a coin-pop in the HUD.
 
 ## What it shows (screenshots)
 
-- `1-serve.jpg` — the busy-service cover: two dishes already served (coins on
-  the board, COMBO x2), a finished Sate Ayam on the plate with the SERVE
-  button lit gold ("Matches: Sate Ayam — ring the bell!"), a fresh egg
-  mid-cook on a burner with its progress ring, timer at 1:27.
+- `1-serve.jpg` — the busy-service cover: a five-customer queue at the
+  warung (ojek driver, ibu, student, office worker, pak in batik) under a
+  red-and-cream awning and string lights, each with a thought bubble showing
+  their dish and a patience bar; night sky with moon in the window, a BUKA
+  sign, cash register and stools. Two dishes already served (coins on the
+  board, COMBO x2), a finished Sate Ayam on the plate with the SERVE button
+  lit gold ("Matches: Sate Ayam — ring the bell!"), a fresh egg mid-cook on
+  a burner with its progress ring, timer at 1:27.
 - `2-play.jpg` — the stove at full tilt: all three burners cooking with steam,
-  a dish mid-assembly (rice + noodles on the plate), two orders on the board.
+  a dish mid-assembly (rice + noodles on the plate), two orders on the board,
+  and the queue waiting under the awning.
 - `3-rush.jpg` — the urgency moment: a ticket about to walk out (patience bar
-  red and flashing, worried customer face), timer at 0:24, one heart already
-  lost, an egg still cooking.
+  red and flashing, worried customer face in the queue), timer at 0:24, one
+  heart already lost, an egg still cooking.
 - `4-end.jpg` — the shift-complete results screen (11 dishes, 148 coins,
   2 stars, best combo x4, 2 mistakes, 1 heart left) with PLAY AGAIN.
 
@@ -79,7 +84,12 @@ on mistakes, and a coin-pop in the HUD.
 - A kitchen and an order board, ingredients on the counter, a dish
   mid-assembly, a timer, and a plate ready to serve are all visible in the
   screenshots, which are real renders of the game's own code (staged with
-  `?shot=<name>&seed=1`, deterministic per seed).
+  `?shot=<name>&seed=1`, deterministic per seed). The scene is a full warung
+  storefront, not just a counter: a five-customer queue (ojek driver, ibu,
+  student, office worker, pak in batik — VIP customers get a gold outline)
+  with thought bubbles showing each ordered dish and patience bars mirroring
+  the tickets, a striped awning, string lights, a night sky with moon, a
+  BUKA sign, a cash register and stools.
 - `main.ts` (Node 22) copies `game/` and `screenshots/` to the output and
   writes `dossier.json` with the kit's vendored `vendor/makefun-game.ts`
   (copied unchanged). `node serve.ts` serves the game locally on port 8080.
