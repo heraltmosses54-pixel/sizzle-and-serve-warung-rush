@@ -81,7 +81,10 @@ export const LAYOUT = {
   counter: { x: 0, y: 470, w: 1280, h: 250 },
   bins: { x: 24, y: 500, w: 92, h: 108, gap: 12 },
   stove: { x: 920, y: 500, w: 336, h: 108 },
-  plate: { x: 480, y: 300, w: 320, h: 150 },
-  serve: { x: 830, y: 300, w: 170, h: 70 },
-  trash: { x: 1062, y: 292, w: 76, h: 112 },
+  // The plate, serve bell and trash sit on the RIGHT, so the five-customer
+  // queue owns the whole left-centre of the wall and no customer hides
+  // behind the plate. (input.js reads these same rects, so clicks follow.)
+  plate: { x: 780, y: 300, w: 320, h: 150 },
+  serve: { x: 1100, y: 390, w: 140, h: 70 },
+  trash: { x: 1150, y: 280, w: 76, h: 112 },
 };

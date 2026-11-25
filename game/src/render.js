@@ -1,9 +1,11 @@
 // Every pixel of Sizzle & Serve is drawn here on a 1280x720 canvas: the warung
 // storefront (awning, string lights, night window, BUKA sign, cash register,
-// stools), the five-customer queue with thought bubbles and patience bars, the
-// kitchen, the order board, the counter bins, the stove, the plate, the HUD and
-// the menus. All art is original vector drawing (no images, no fonts beyond
-// the system sans), so the game needs no assets.
+// stools), the plank wall with its SATE AYAM poster, banner, hanging plant,
+// crack and stains, the five big customers standing grounded on the waiting
+// deck with thought bubbles and patience bars, the kitchen, the order board,
+// the counter bins, the stove, the plate, the HUD and the menus. All art is
+// original vector drawing (no images, no fonts beyond the system sans), so the
+// game needs no assets.
 import { INGREDIENTS, ING_BY_ID, LAYOUT, RECIPES, VIEW } from './config.js';
 import { SCREEN_OVER, SCREEN_PAUSE, SCREEN_PLAY, SCREEN_TITLE, sortedKey } from './world.js';
 
@@ -167,11 +169,29 @@ export function drawIngredientIcon(ctx, id, cx, cy, s, cooked = false) {
 }
 
 function drawBackground(ctx, t) {
-  // Warm tiled wall.
+  // Warm wood-plank wall: alternating plank shades, grain strokes, seams and
+  // nails, so the warung reads as a real building wall, not a blank square.
+  // A darker wainscot band runs along the bottom of the wall.
   ctx.fillStyle = '#f3d9a4'; ctx.fillRect(0, 96, 1280, 374);
-  ctx.strokeStyle = 'rgba(180,130,60,0.35)'; ctx.lineWidth = 2;
-  for (let y = 120; y < 470; y += 44) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(1280, y); ctx.stroke(); }
-  for (let x = 0; x < 1280; x += 88) { ctx.beginPath(); ctx.moveTo(x, 96); ctx.lineTo(x, 470); ctx.stroke(); }
+  const plankShades = ['#f6e2b6', '#efd49b', '#f3d9a4', '#eed092'];
+  for (let py = 96, i = 0; py < 470; py += 34, i += 1) {
+    ctx.fillStyle = plankShades[i % 4]; ctx.fillRect(0, py, 1280, 34);
+    ctx.strokeStyle = 'rgba(180,130,60,0.28)'; ctx.lineWidth = 1.5; ctx.lineCap = 'round';
+    for (const gy of [py + 11, py + 23]) {
+      ctx.beginPath(); ctx.moveTo(0, gy);
+      for (let x = 0; x <= 1280; x += 160) ctx.quadraticCurveTo(x + 80, gy + 3, x + 160, gy);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = 'rgba(140,95,40,0.5)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, py + 33); ctx.lineTo(1280, py + 33); ctx.stroke();
+    ctx.fillStyle = 'rgba(120,80,35,0.55)';
+    const nx = (i % 2 === 0) ? 64 : 320;
+    for (let x = nx; x < 1280; x += 256) { ctx.beginPath(); ctx.arc(x, py + 17, 2, 0, 7); ctx.fill(); }
+  }
+  // Wainscot: darker wood panels along the bottom of the wall.
+  ctx.fillStyle = '#c98d54'; ctx.fillRect(0, 430, 1280, 40);
+  ctx.fillStyle = '#b87a45'; for (let x = 0; x < 1280; x += 96) ctx.fillRect(x, 430, 3, 40);
+  ctx.fillStyle = '#a8763f'; ctx.fillRect(0, 430, 1280, 4);
   // Striped warung awning across the top of the wall, red and cream, scalloped edge.
   for (let i = 0; i < 16; i += 1) {
     ctx.fillStyle = i % 2 === 0 ? '#d9382b' : '#fff3df';
@@ -224,11 +244,11 @@ function drawBackground(ctx, t) {
   // Frame and cross bars on top.
   ctx.strokeStyle = '#6b4a2f'; ctx.lineWidth = 6; rr(ctx, 60, 130, 220, 150, 10); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(170, 130); ctx.lineTo(170, 280); ctx.moveTo(60, 205); ctx.lineTo(280, 205); ctx.stroke();
-  // Neon BUKA (open) sign stuck in the window's bottom-right corner.
-  ctx.fillStyle = 'rgba(20,16,8,0.88)'; rr(ctx, 196, 232, 78, 40, 6); ctx.fill();
-  ctx.strokeStyle = '#ffd23e'; ctx.lineWidth = 2; rr(ctx, 196, 232, 78, 40, 6); ctx.stroke();
-  text(ctx, 'BUKA', 235, 246, 15, '#ffd23e', 'center');
-  text(ctx, 'OPEN', 235, 262, 9, '#fff', 'center');
+  // Neon BUKA (open) sign stuck in the window's bottom-left corner.
+  ctx.fillStyle = 'rgba(20,16,8,0.88)'; rr(ctx, 64, 232, 78, 40, 6); ctx.fill();
+  ctx.strokeStyle = '#ffd23e'; ctx.lineWidth = 2; rr(ctx, 64, 232, 78, 40, 6); ctx.stroke();
+  text(ctx, 'BUKA', 103, 246, 15, '#ffd23e', 'center');
+  text(ctx, 'OPEN', 103, 262, 9, '#fff', 'center');
   // Chalkboard menu on the right wall.
   ctx.fillStyle = '#2f4a3a'; rr(ctx, 980, 130, 240, 150, 8); ctx.fill();
   ctx.strokeStyle = '#c9a06a'; ctx.lineWidth = 5; rr(ctx, 980, 130, 240, 150, 8); ctx.stroke();
@@ -257,27 +277,68 @@ function drawBackground(ctx, t) {
     ctx.fillStyle = '#555'; ctx.beginPath(); ctx.arc(x, cy, Math.round(r * 0.7), 0, 7); ctx.fill();
     ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.beginPath(); ctx.arc(x - r * 0.3, cy - r * 0.3, Math.round(r * 0.18), 0, 7); ctx.fill();
   }
+  // Framed SATE AYAM poster pinned under the window, tape on the corners.
+  ctx.fillStyle = '#fff8e8'; rr(ctx, 40, 356, 160, 96, 6); ctx.fill();
+  ctx.strokeStyle = '#8a5a2b'; ctx.lineWidth = 4; rr(ctx, 40, 356, 160, 96, 6); ctx.stroke();
+  ctx.fillStyle = 'rgba(240,220,160,0.85)'; ctx.fillRect(36, 352, 22, 12); ctx.fillRect(182, 352, 22, 12);
+  text(ctx, 'SATE AYAM', 120, 380, 17, '#d9382b', 'center');
+  text(ctx, '★ BEST SELLER ★', 120, 400, 11, '#8a5a2b', 'center');
+  ctx.strokeStyle = '#c9a06a'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(68, 428); ctx.lineTo(172, 412); ctx.stroke();
+  for (const [mx, my] of [[90, 423], [120, 418], [150, 413]]) {
+    ctx.fillStyle = '#a85f2e'; rr(ctx, mx - 8, my - 7, 16, 14, 3); ctx.fill();
+    ctx.fillStyle = 'rgba(255,220,170,0.8)'; rr(ctx, mx - 7, my - 6, 14, 4, 2); ctx.fill();
+  }
+  text(ctx, 'Rp 16rb', 120, 444, 14, '#2f6b28', 'center');
+  // Narrow red banner on the far right edge: SATE / MIE / NASI stacked.
+  ctx.fillStyle = '#d9382b'; rr(ctx, 1226, 140, 48, 160, 6); ctx.fill();
+  ctx.strokeStyle = '#fff3df'; ctx.lineWidth = 2; rr(ctx, 1226, 140, 48, 160, 6); ctx.stroke();
+  text(ctx, 'SATE', 1250, 168, 13, '#fff', 'center');
+  text(ctx, 'MIE', 1250, 198, 13, '#fff', 'center');
+  text(ctx, 'NASI', 1250, 228, 13, '#fff', 'center');
+  for (const cy of [258, 282]) {
+    ctx.fillStyle = '#d9382b'; ctx.strokeStyle = '#fff';
+    ctx.beginPath(); ctx.moveTo(1242, cy - 8); ctx.quadraticCurveTo(1258, cy - 14, 1258, cy + 2);
+    ctx.quadraticCurveTo(1250, cy + 8, 1242, cy - 8); ctx.fill(); ctx.stroke();
+  }
+  // Hanging plant left of the window, in a clay pot.
+  ctx.strokeStyle = '#6b4a2f'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(32, 124); ctx.lineTo(32, 150); ctx.stroke();
+  ctx.fillStyle = '#b87a45'; ctx.beginPath(); ctx.moveTo(20, 150); ctx.lineTo(44, 150); ctx.lineTo(39, 168); ctx.lineTo(25, 168); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#58a34a';
+  ctx.beginPath(); ctx.ellipse(26, 146, 6, 9, -0.4, 0, 7); ctx.ellipse(38, 144, 6, 9, 0.4, 0, 7); ctx.ellipse(32, 140, 5, 8, 0, 0, 7); ctx.fill();
+  // A hairline crack in the plaster and damp stains, for age.
+  ctx.strokeStyle = 'rgba(90,60,30,0.55)'; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.beginPath();
+  ctx.moveTo(1150, 408); ctx.lineTo(1158, 424); ctx.lineTo(1152, 440); ctx.lineTo(1162, 456); ctx.lineTo(1156, 466); ctx.stroke();
+  ctx.fillStyle = 'rgba(140,110,70,0.25)'; ctx.beginPath(); ctx.ellipse(1182, 452, 26, 12, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = 'rgba(140,110,70,0.22)'; ctx.beginPath(); ctx.ellipse(320, 452, 30, 10, 0, 0, 7); ctx.fill();
   // Steam wisp over the stove, drifting with time.
   ctx.strokeStyle = 'rgba(255,255,255,0.55)'; ctx.lineWidth = 4; ctx.lineCap = 'round';
   for (let i = 0; i < 2; i += 1) {
-    const sx = 1010 + i * 120 + Math.sin(t * 1.4 + i * 2) * 6;
+    const sx = 1150 + i * 100 + Math.sin(t * 1.4 + i * 2) * 6;
     ctx.beginPath(); ctx.moveTo(sx, 470); ctx.quadraticCurveTo(sx + 12, 440, sx - 6, 412); ctx.stroke();
   }
   // Floor.
   ctx.fillStyle = '#b07a45'; ctx.fillRect(0, 470, 1280, 250);
   ctx.fillStyle = '#9c6a38'; for (let x = 0; x < 1280; x += 128) ctx.fillRect(x, 470, 4, 250);
-  // Cash register on a little side table under the serve bell.
-  ctx.fillStyle = '#6b4423'; rr(ctx, 852, 428, 136, 32, 6); ctx.fill();
-  ctx.strokeStyle = '#4a2e15'; ctx.lineWidth = 2; rr(ctx, 852, 428, 136, 32, 6); ctx.stroke();
-  ctx.fillStyle = '#5a3a18'; ctx.fillRect(862, 460, 10, 10); ctx.fillRect(968, 460, 10, 10);
-  ctx.fillStyle = '#3a3a3a'; rr(ctx, 872, 392, 96, 36, 6); ctx.fill();
-  ctx.strokeStyle = '#222'; ctx.lineWidth = 2; rr(ctx, 872, 392, 96, 36, 6); ctx.stroke();
-  ctx.fillStyle = '#ffd23e'; rr(ctx, 882, 398, 42, 14, 3); ctx.fill();
-  text(ctx, 'Rp', 903, 406, 10, '#3a2a18', 'center');
+  // Raised wooden waiting deck inside the warung: the queue's floor line.
+  // Customers stand on its top edge (y 384); the serving board and counter
+  // in front of it hide its lower face in the middle, as a real counter would.
+  ctx.fillStyle = '#9c6a38'; ctx.fillRect(220, 382, 540, 20);
+  ctx.fillStyle = '#c98d54'; ctx.fillRect(220, 382, 540, 4);
+  ctx.fillStyle = '#7a4a22'; for (let x = 260; x < 760; x += 60) ctx.fillRect(x, 386, 3, 16);
+  ctx.fillStyle = '#7a4a22'; ctx.fillRect(220, 400, 540, 2);
+  // Cash register on a little side table under the waiting deck, left side.
+  ctx.fillStyle = '#6b4423'; rr(ctx, 250, 428, 136, 32, 6); ctx.fill();
+  ctx.strokeStyle = '#4a2e15'; ctx.lineWidth = 2; rr(ctx, 250, 428, 136, 32, 6); ctx.stroke();
+  ctx.fillStyle = '#5a3a18'; ctx.fillRect(260, 460, 10, 10); ctx.fillRect(366, 460, 10, 10);
+  ctx.fillStyle = '#3a3a3a'; rr(ctx, 270, 392, 96, 36, 6); ctx.fill();
+  ctx.strokeStyle = '#222'; ctx.lineWidth = 2; rr(ctx, 270, 392, 96, 36, 6); ctx.stroke();
+  ctx.fillStyle = '#ffd23e'; rr(ctx, 280, 398, 42, 14, 3); ctx.fill();
+  text(ctx, 'Rp', 301, 406, 10, '#3a2a18', 'center');
   ctx.fillStyle = '#f5f0dc';
-  for (let i = 0; i < 4; i += 1) ctx.fillRect(884 + i * 13, 417, 9, 6);
+  for (let i = 0; i < 4; i += 1) ctx.fillRect(282 + i * 13, 417, 9, 6);
   ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(878, 396); ctx.lineTo(878, 424); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(276, 396); ctx.lineTo(276, 424); ctx.stroke();
 }
 
 // Two wooden stools where customers sit at the counter. Drawn after the counter
@@ -299,92 +360,114 @@ function drawStools(ctx) {
 
 function patienceColor(frac) { return frac > 0.5 ? '#58a34a' : frac > 0.25 ? '#f2a541' : '#d9382b'; }
 
-// The customer queue: one illustrated customer per order ticket, plus waiting
-// customers behind them, so the stall reads as a busy warung instead of an
-// empty kitchen. A customer's face and patience bar mirror their ticket;
-// a VIP order's customer gets a gold outline.
-const QUEUE_X = [400, 530, 660, 790, 920];
+// The customer queue: five BIG illustrated customers standing INSIDE the warung
+// on a raised wooden waiting deck (feet on the deck's top edge, y 384, with a
+// soft shadow under each pair of shoes), so they read as real people waiting
+// for their order instead of floating busts. A customer's face and patience
+// bar mirror their ticket; a VIP order's customer gets a gold outline.
+const QUEUE_X = [275, 375, 475, 575, 675];
 const QUEUE_ROSTER = [
-  { skin: '#c98d5f', top: '#2f7a2e', hat: 'ojek' }, // ojek driver, green jacket + helmet
-  { skin: '#f2c89b', top: '#d9382b', hat: 'kerudung' }, // ibu with a red kerudung
-  { skin: '#e8b88a', top: '#3f6fb5', hat: 'cap' }, // student with a blue cap
-  { skin: '#f2c89b', top: '#f5f0dc', hat: 'tie' }, // office worker, white shirt + tie
-  { skin: '#c98d5f', top: '#f2a541', hat: 'batik' }, // pak in a batik shirt
+  { skin: '#c98d5f', top: '#2f7a2e', pants: '#2f3a4a', hat: 'ojek' }, // ojek driver, green jacket + helmet
+  { skin: '#f2c89b', top: '#d9382b', pants: '#8a2f2f', hat: 'kerudung' }, // ibu with a red kerudung
+  { skin: '#e8b88a', top: '#3f6fb5', pants: '#3a3a3a', hat: 'cap' }, // student with a blue cap
+  { skin: '#f2c89b', top: '#f5f0dc', pants: '#2f2f38', hat: 'tie' }, // office worker, white shirt + tie
+  { skin: '#c98d5f', top: '#f2a541', pants: '#5a4a3a', hat: 'batik' }, // pak in a batik shirt
 ];
+const QUEUE_FEET = 384; // every customer's shoes sit on this deck line
 
 function drawCustomer(ctx, cx, spec, frac, vip, recipe) {
-  // VIP: gold outline around the whole customer.
+  const fy = QUEUE_FEET; // feet line
+  const hy = fy - 122; // head centre (head r 26)
+  // Soft shadow under the shoes, on the deck.
+  ctx.fillStyle = 'rgba(0,0,0,0.20)';
+  ctx.beginPath(); ctx.ellipse(cx, fy + 2, 46, 6, 0, 0, 7); ctx.fill();
+  // VIP: gold outline around the whole customer (bubble to shoes).
   if (vip) {
     ctx.strokeStyle = '#f2a541'; ctx.lineWidth = 4;
-    rr(ctx, cx - 54, 164, 108, 146, 12); ctx.stroke();
-    ctx.fillStyle = '#b87a1d'; rr(ctx, cx - 22, 158, 44, 14, 4); ctx.fill();
-    text(ctx, 'VIP', cx, 166, 10, '#fff', 'center');
+    rr(ctx, cx - 62, 168, 124, 222, 12); ctx.stroke();
+    ctx.fillStyle = '#b87a1d'; rr(ctx, cx - 24, 156, 48, 14, 4); ctx.fill();
+    text(ctx, 'VIP', cx, 163, 10, '#fff', 'center');
   }
   // Thought bubble: the ordered dish, or an ellipsis while waiting.
-  ctx.fillStyle = '#fff'; rr(ctx, cx - 48, 170, 96, 42, 10); ctx.fill();
-  ctx.strokeStyle = vip ? '#f2a541' : '#c9a06a'; ctx.lineWidth = 2; rr(ctx, cx - 48, 170, 96, 42, 10); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx - 8, 212); ctx.lineTo(cx + 8, 212); ctx.lineTo(cx, 224); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#fff'; rr(ctx, cx - 55, 168, 110, 42, 10); ctx.fill();
+  ctx.strokeStyle = vip ? '#f2a541' : '#c9a06a'; ctx.lineWidth = 2; rr(ctx, cx - 55, 168, 110, 42, 10); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx - 10, 210); ctx.lineTo(cx + 10, 210); ctx.lineTo(cx, 226); ctx.closePath(); ctx.fill(); ctx.stroke();
   if (recipe) {
-    recipe.needs.forEach((id, j) => drawIngredientIcon(ctx, id, cx - 28 + j * 28, 191, 22, true));
+    recipe.needs.forEach((id, j) => drawIngredientIcon(ctx, id, cx - 28 + j * 28, 189, 22, true));
   } else {
-    text(ctx, '…', cx, 192, 20, '#8a6a42', 'center');
+    text(ctx, '…', cx, 190, 22, '#8a6a42', 'center');
   }
-  // Head.
-  const hy = 228;
+  // Legs and shoes, planted on the deck line.
   if (spec.hat === 'kerudung') {
-    // Kerudung: a scarf framing the face, draping to the shoulders.
-    ctx.fillStyle = spec.top; ctx.beginPath(); ctx.arc(cx, hy, 20, 0, 7); ctx.fill();
-    ctx.fillStyle = spec.top; rr(ctx, cx - 20, hy + 6, 40, 22, 8); ctx.fill();
+    // Long dress instead of separate legs.
+    ctx.fillStyle = spec.pants; rr(ctx, cx - 40, 338, 80, 40, 10); ctx.fill();
+    ctx.strokeStyle = 'rgba(60,35,15,0.5)'; ctx.lineWidth = 2; rr(ctx, cx - 40, 338, 80, 40, 10); ctx.stroke();
+  } else {
+    ctx.fillStyle = spec.pants;
+    rr(ctx, cx - 30, 338, 22, 40, 8); ctx.fill();
+    rr(ctx, cx + 8, 338, 22, 40, 8); ctx.fill();
+    ctx.strokeStyle = 'rgba(60,35,15,0.5)'; ctx.lineWidth = 2;
+    rr(ctx, cx - 30, 338, 22, 40, 8); ctx.stroke();
+    rr(ctx, cx + 8, 338, 22, 40, 8); ctx.stroke();
   }
-  ctx.fillStyle = spec.skin; ctx.beginPath(); ctx.arc(cx, hy, 15, 0, 7); ctx.fill();
-  ctx.strokeStyle = 'rgba(60,35,15,0.5)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(cx, hy, 15, 0, 7); ctx.stroke();
-  if (spec.hat === 'ojek') {
-    // Green helmet with a visor line.
-    ctx.fillStyle = '#2f7a2e'; ctx.beginPath(); ctx.arc(cx, hy - 3, 16, Math.PI, 0); ctx.fill();
-    ctx.fillStyle = '#2f7a2e'; rr(ctx, cx - 16, hy - 6, 32, 6, 3); ctx.fill();
-    ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(cx - 12, hy - 10); ctx.quadraticCurveTo(cx, hy - 14, cx + 12, hy - 10); ctx.stroke();
-  } else if (spec.hat === 'cap') {
-    ctx.fillStyle = '#3f6fb5'; ctx.beginPath(); ctx.arc(cx, hy - 2, 15, Math.PI, 0); ctx.fill();
-    ctx.fillStyle = '#2a4a7a'; rr(ctx, cx - 2, hy - 8, 20, 5, 2); ctx.fill();
-  } else if (spec.hat === 'batik') {
-    ctx.fillStyle = '#3a2a18'; ctx.beginPath(); ctx.arc(cx, hy - 4, 15, Math.PI * 0.95, Math.PI * 2.05); ctx.fill();
-  } else if (spec.hat === 'tie') {
-    ctx.fillStyle = '#3a2a18'; ctx.beginPath(); ctx.arc(cx, hy - 4, 15, Math.PI * 0.95, Math.PI * 2.05); ctx.fill();
-  }
-  // Face: eyes and a mouth that mirrors the patience bar.
   ctx.fillStyle = '#3a2a18';
-  ctx.beginPath(); ctx.arc(cx - 5, hy - 1, 1.6, 0, 7); ctx.arc(cx + 5, hy - 1, 1.6, 0, 7); ctx.fill();
-  ctx.strokeStyle = '#3a2a18'; ctx.lineWidth = 1.8; ctx.lineCap = 'round';
-  ctx.beginPath();
-  if (frac > 0.5) { ctx.arc(cx, hy + 4, 5, 0.15 * Math.PI, 0.85 * Math.PI); }
-  else if (frac > 0.25) { ctx.moveTo(cx - 4, hy + 7); ctx.lineTo(cx + 4, hy + 7); }
-  else { ctx.arc(cx, hy + 10, 5, 1.15 * Math.PI, 1.85 * Math.PI); }
-  ctx.stroke();
-  if (frac <= 0.25) { ctx.fillStyle = '#7ec8e3'; ctx.beginPath(); ctx.arc(cx + 14, hy - 8, 2.6, 0, 7); ctx.fill(); }
-  // Body: shoulders to the counter line.
+  ctx.beginPath(); ctx.ellipse(cx - 19, fy - 4, 15, 6, 0, 0, 7); ctx.ellipse(cx + 19, fy - 4, 15, 6, 0, 0, 7); ctx.fill();
+  // Arms, hanging at the sides.
+  ctx.strokeStyle = spec.top; ctx.lineWidth = 15; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(cx - 42, 300); ctx.lineTo(cx - 54, 344); ctx.moveTo(cx + 42, 300); ctx.lineTo(cx + 54, 344); ctx.stroke();
+  // Body: shoulders to the hem.
   ctx.fillStyle = spec.top;
   ctx.beginPath();
-  ctx.moveTo(cx - 32, 298); ctx.lineTo(cx - 26, 246);
-  ctx.quadraticCurveTo(cx, 238, cx + 26, 246); ctx.lineTo(cx + 32, 298); ctx.closePath(); ctx.fill();
+  ctx.moveTo(cx - 52, 344); ctx.lineTo(cx - 44, 296);
+  ctx.quadraticCurveTo(cx, 286, cx + 44, 296); ctx.lineTo(cx + 52, 344); ctx.closePath(); ctx.fill();
   ctx.strokeStyle = 'rgba(60,35,15,0.5)'; ctx.lineWidth = 2; ctx.stroke();
   if (spec.hat === 'tie') {
     ctx.fillStyle = '#d9382b';
-    ctx.beginPath(); ctx.moveTo(cx - 5, 250); ctx.lineTo(cx + 5, 250); ctx.lineTo(cx, 272); ctx.closePath(); ctx.fill();
-    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(cx - 8, 244); ctx.lineTo(cx, 250); ctx.lineTo(cx + 8, 244); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx - 8, 300); ctx.lineTo(cx + 8, 300); ctx.lineTo(cx, 330); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(cx - 13, 292); ctx.lineTo(cx, 300); ctx.lineTo(cx + 13, 292); ctx.closePath(); ctx.fill();
   } else if (spec.hat === 'batik') {
     ctx.fillStyle = 'rgba(60,35,15,0.55)';
-    for (const [dx, dy] of [[-16, 258], [0, 252], [16, 258], [-8, 272], [8, 272], [0, 286]]) {
-      ctx.beginPath(); ctx.arc(cx + dx, dy, 2.2, 0, 7); ctx.fill();
+    for (const [dx, dy] of [[-27, 310], [0, 302], [27, 310], [-14, 326], [14, 326], [0, 340]]) {
+      ctx.beginPath(); ctx.arc(cx + dx, dy, 3.5, 0, 7); ctx.fill();
     }
   } else if (spec.hat === 'kerudung') {
     ctx.fillStyle = 'rgba(255,255,255,0.35)';
-    ctx.beginPath(); ctx.moveTo(cx - 20, 250); ctx.lineTo(cx + 20, 250); ctx.lineTo(cx + 14, 258); ctx.lineTo(cx - 14, 258); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx - 34, 300); ctx.lineTo(cx + 34, 300); ctx.lineTo(cx + 24, 312); ctx.lineTo(cx - 24, 312); ctx.closePath(); ctx.fill();
   }
-  // Patience bar under the feet (order customers only).
+  // Head.
+  if (spec.hat === 'kerudung') {
+    // Kerudung: a scarf framing the face, draping to the shoulders.
+    ctx.fillStyle = spec.top; ctx.beginPath(); ctx.arc(cx, hy, 34, 0, 7); ctx.fill();
+    ctx.fillStyle = spec.top; rr(ctx, cx - 34, hy + 6, 68, 34, 10); ctx.fill();
+  }
+  ctx.fillStyle = spec.skin; ctx.beginPath(); ctx.arc(cx, hy, 26, 0, 7); ctx.fill();
+  ctx.strokeStyle = 'rgba(60,35,15,0.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cx, hy, 26, 0, 7); ctx.stroke();
+  if (spec.hat === 'ojek') {
+    // Green helmet with a visor line.
+    ctx.fillStyle = '#2f7a2e'; ctx.beginPath(); ctx.arc(cx, hy - 5, 27, Math.PI, 0); ctx.fill();
+    ctx.fillStyle = '#2f7a2e'; rr(ctx, cx - 27, hy - 8, 54, 8, 4); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(cx - 20, hy - 14); ctx.quadraticCurveTo(cx, hy - 20, cx + 20, hy - 14); ctx.stroke();
+  } else if (spec.hat === 'cap') {
+    ctx.fillStyle = '#3f6fb5'; ctx.beginPath(); ctx.arc(cx, hy - 2, 25, Math.PI, 0); ctx.fill();
+    ctx.fillStyle = '#2a4a7a'; rr(ctx, cx - 2, hy - 10, 34, 7, 3); ctx.fill();
+  } else if (spec.hat === 'batik' || spec.hat === 'tie') {
+    ctx.fillStyle = '#3a2a18'; ctx.beginPath(); ctx.arc(cx, hy - 4, 25, Math.PI * 0.95, Math.PI * 2.05); ctx.fill();
+  }
+  // Face: eyes and a mouth that mirrors the patience bar.
+  ctx.fillStyle = '#3a2a18';
+  ctx.beginPath(); ctx.arc(cx - 9, hy - 2, 2.6, 0, 7); ctx.arc(cx + 9, hy - 2, 2.6, 0, 7); ctx.fill();
+  ctx.strokeStyle = '#3a2a18'; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+  ctx.beginPath();
+  if (frac > 0.5) { ctx.arc(cx, hy + 8, 8, 0.15 * Math.PI, 0.85 * Math.PI); }
+  else if (frac > 0.25) { ctx.moveTo(cx - 7, hy + 10); ctx.lineTo(cx + 7, hy + 10); }
+  else { ctx.arc(cx, hy + 14, 8, 1.15 * Math.PI, 1.85 * Math.PI); }
+  ctx.stroke();
+  if (frac <= 0.25) { ctx.fillStyle = '#7ec8e3'; ctx.beginPath(); ctx.arc(cx + 24, hy - 14, 4, 0, 7); ctx.fill(); }
+  // Patience bar under the shoes, on the deck face (order customers only).
   if (recipe) {
-    ctx.fillStyle = '#e8dcc0'; rr(ctx, cx - 42, 300, 84, 6, 3); ctx.fill();
-    ctx.fillStyle = patienceColor(frac); rr(ctx, cx - 42, 300, 84 * frac, 6, 3); ctx.fill();
+    ctx.fillStyle = '#e8dcc0'; rr(ctx, cx - 55, 390, 110, 6, 3); ctx.fill();
+    ctx.fillStyle = patienceColor(frac); rr(ctx, cx - 55, 390, 110 * frac, 6, 3); ctx.fill();
   }
 }
 
@@ -581,8 +664,8 @@ function drawPlateArea(ctx, world) {
   // The bottle stands on the serving board beside the plate, clearly separate.
   if (world.plate.includes('sauce')) {
     ctx.fillStyle = 'rgba(0,0,0,0.18)';
-    ctx.beginPath(); ctx.ellipse(500, 424, 14, 4, 0, 0, 7); ctx.fill();
-    drawIngredientIcon(ctx, 'sauce', 500, 406, 72, true);
+    ctx.beginPath(); ctx.ellipse(800, 424, 14, 4, 0, 0, 7); ctx.fill();
+    drawIngredientIcon(ctx, 'sauce', 800, 406, 72, true);
   }
   text(ctx, world.plate.length === 0 ? 'Your plate — build a dish here' : `${world.plate.length} / 3 on the plate`, p.x + p.w / 2, p.y + 158, 14, '#3a2a18', 'center');
   // Serve bell and trash. The bell swells for a beat after every serve.
@@ -622,7 +705,7 @@ function drawPlateArea(ctx, world) {
   ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 3;
   ctx.beginPath(); ctx.moveTo(bx - 22, by - 28); ctx.lineTo(bx - 18, by + 26); ctx.stroke();
   text(ctx, 'TRASH (T)', bx, by + 50, 13, '#5a3a18', 'center');
-  if (match) text(ctx, `Matches: ${match.recipe.name} — ring the bell!`, 915, 382, 14, '#2f6b28', 'center');
+  if (match) text(ctx, `Matches: ${match.recipe.name} — ring the bell!`, 940, 292, 14, '#2f6b28', 'center');
 }
 
 function drawFloaters(ctx, world) {
